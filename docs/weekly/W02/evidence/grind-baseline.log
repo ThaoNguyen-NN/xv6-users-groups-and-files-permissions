@@ -1,7 +1,52 @@
+docs/w02-grind-baseline
+Script started on 2026-11-01 13:11:33+07:00 [COMMAND="make qemu" TERM="xterm-256color" TTY="/dev/pts/0" COLUMNS="230" LINES="55"]
 Script started on 2026-11-01 10:10:55+07:00 [COMMAND="make qemu" TERM="xterm-256color" TTY="/dev/pts/2" COLUMNS="89" LINES="39"]
+main
 qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -global virtio-mmio.force-legacy=false -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
 
 xv6 kernel is booting
+
+docs/w02-grind-baseline
+hart 2 starting
+hart 1 starting
+ireclaim: orphaned inode 27
+init: starting sh
+$ $ ls
+exec $ failed
+$ $ ls[D[D   
+exec $ failed
+$ ls
+.              1 1 1024
+..             1 1 1024
+README         2 2 2441
+cat            2 3 36792
+echo           2 4 35624
+forktest       2 5 17520
+grep           2 6 40232
+init           2 7 36080
+kill           2 8 35568
+ln             2 9 35376
+ls             2 10 38920
+mkdir          2 11 35608
+rm             2 12 35600
+sh             2 13 58672
+stressfs       2 14 36480
+usertests      2 15 203048
+grind          2 16 51856
+wc             2 17 37696
+zombie         2 18 34960
+logstress      2 19 37544
+forphan        2 20 36408
+dorphan        2 21 35872
+sync           2 22 35024
+console        3 23 0
+grindir        1 24 32
+a              2 25 0
+b              2 25 0
+$ grind
+BABABABABABABABABABABAABABQEMU: Terminated
+
+Script done on 2026-11-01 13:14:31+07:00 [COMMAND_EXIT_CODE="0"]
 
 hart 1 starting
 hart 2 starting
@@ -10,3 +55,4 @@ $ grind
 BAABBABAABBABABAABABABABABABABABABBAABABABABBAABABABABABABBABABABABABABABABAABABABABABABABBABABABABABAABABABABABABABABABABABABABABABABABABABAABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAABABABABABABABABABABABABABBABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABBABABABABABABABABABABABABABABABABABABABABABABABAABABABBABABABABABABABABABABABABABABABABABABABAABBAABBABABABABABAABABABBABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABABAQEMU: Terminated
 
 Script done on 2026-11-01 11:12:19+07:00 [COMMAND_EXIT_CODE="0"]
+main
