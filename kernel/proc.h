@@ -101,4 +101,6 @@ struct proc {
   struct file *ofile[NOFILE];  // Open files
   struct inode *cwd;           // Current directory
   char name[16];               // Process name (debugging)
+  uint uid;                    // User ID (0 = root)
+  uint gid;                    // Group ID
 };

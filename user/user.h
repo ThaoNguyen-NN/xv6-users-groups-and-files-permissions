@@ -25,6 +25,10 @@ char *sys_sbrk(int, int);
 int pause(int);
 int uptime(void);
 int sync(void);
+int getuid(void);
+int getgid(void);
+int setuid(int);
+int setgid(int);
 
 // ulib.c
 int stat(const char *, struct stat *);
