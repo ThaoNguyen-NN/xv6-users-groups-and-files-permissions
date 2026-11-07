@@ -129,7 +129,10 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 # details:
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
-
+$U/_pwdtest: $U/pwdtest.o $U/pwd.o $(ULIB)
+	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
+	$(OBJDUMP) -S $@ > $U/pwdtest.asm
+	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/pwdtest.sym
 UPROGS=\
 	$U/_cat\
 	$U/_echo\
