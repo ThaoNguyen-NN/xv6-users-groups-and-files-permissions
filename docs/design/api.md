@@ -28,3 +28,59 @@ Chương trình: `whoami` in `uid=<n> gid=<n>` (sẽ in tên user khi có `/etc/
 - [ ] Đức Anh: `metatest` kiểm tra `mode/uid/gid` của file qua `stat`.
   - Cần: `struct stat` có `mode/uid/gid` và `stati()` sao chép các trường này.
   - Đạt khi (theo thiết kế UGP-12): file do mkfs tạo (`/README`) có mode 0644, uid 0, gid 0, còn chương trình (`/init`) có mode 0755; file mới do root tạo có mode 0644, thư mục mới 0755; `console` 0666; file tạo bởi process uid 1000 gid 100 mang đúng uid/gid đó; các giá trị còn nguyên sau khi khởi động lại qemu mà không dựng lại `fs.img`.
+
+## User lookup API (UGP-18)
+
+Người thực hiện: Trần Thị Thư _ 20233664
+
+### Dữ liệu /etc/passwd
+
+Định dạng mỗi dòng        name:password:uid:gid
+
+Tài khoản mẫu:
+- root: UID 0, GID 0
+- alice: UID 1000, GID 100
+- carol: UID 1001, GID 100
+- bob: UID 1002, GID 200
+
+### Các hàm
+
+1. getpwnam(const char *name)
+   - Tìm user theo tên.
+   - Trả về con trỏ struct passwd nếu tìm thấy.
+   - Trả NULL nếu không tìm thấy hoặc không đọc được file.
+
+2. getpwuid(int uid)
+   - Tìm user theo UID.
+   - Trả về con trỏ struct passwd nếu tìm thấy.
+   - Trả NULL nếu không tìm thấy hoặc lỗi.
+
+3. getpwgid(int gid)
+   - Tìm user đầu tiên có GID tương ứng.
+   - Trả về NULL nếu không tìm thấy hoặc lỗi.
+
+### Xử lý dữ liệu
+
+- Đọc file bằng open(), read(), close().
+- Ghép dữ liệu qua nhiều lần read().
+- Phân tích các trường name, password, uid, gid.
+- Bỏ qua dòng sai định dạng.
+- Kiểm tra UID/GID là số nguyên hợp lệ.
+- Giới hạn độ dài dòng bằng bộ đệm.
+
+Kết quả tra cứu dùng vùng nhớ static,
+có thể bị ghi đè bởi lần tra cứu thành công tiếp theo.
+
+### Kiểm thử
+
+Chương trình: user/pwdtest.c
+Lệnh: pwdtest --fixture
+
+Kết quả ngày 07/11/2026:
+- 10 tests passed
+- 0 tests failed
+- pwdtest: ALL PASSED
+
+Ghi chú:
+Kiểm thử sử dụng dữ liệu fixture tạm.
+Kiểm thử tích hợp với /etc/passwd trong fs.img sẽ thực hiện sau khi hoàn thành UGP-19.
