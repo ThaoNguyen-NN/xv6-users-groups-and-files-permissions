@@ -156,8 +156,8 @@ UPROGS=\
 	$U/_pwdtest\
 	$U/_metatest\
 
-fs.img: mkfs/mkfs README $(UPROGS)
-	mkfs/mkfs fs.img README $(UPROGS)
+fs.img: mkfs/mkfs README $(UPROGS) etc/passwd
+	mkfs/mkfs fs.img README $(UPROGS) etc/passwd
 
 -include kernel/*.d user/*.d
 

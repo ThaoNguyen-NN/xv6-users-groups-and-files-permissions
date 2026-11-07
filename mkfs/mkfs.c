@@ -73,7 +73,7 @@ int
 main(int argc, char *argv[])
 {
   int i, cc, fd;
-  uint rootino, inum, off;
+  uint rootino, etcino, inum, off;
   struct dirent de;
   char buf[BSIZE];
   struct dinode din;
@@ -117,9 +117,9 @@ main(int argc, char *argv[])
   memset(buf, 0, sizeof(buf));
   memmove(buf, &sb, sizeof(sb));
   wsect(1, buf);
-
   rootino = ialloc(T_DIR);
   assert(rootino == ROOTINO);
+
 
   bzero(&de, sizeof(de));
   de.inum = xshort(rootino);
@@ -130,16 +130,41 @@ main(int argc, char *argv[])
   de.inum = xshort(rootino);
   strcpy(de.name, "..");
   iappend(rootino, &de, sizeof(de));
+etcino = ialloc(T_DIR);
+  bzero(&de, sizeof(de));
+  de.inum = xshort(etcino);
+  strcpy(de.name, ".");
+  iappend(etcino, &de, sizeof(de));
 
+  // Add ".." entry to /etc, pointing to root.
+  bzero(&de, sizeof(de));
+  de.inum = xshort(rootino);
+  strcpy(de.name, "..");
+  iappend(etcino, &de, sizeof(de));
+
+  // Add "etc" entry to root directory.
+  bzero(&de, sizeof(de));
+  de.inum = xshort(etcino);
+  strcpy(de.name, "etc");
+  iappend(rootino, &de, sizeof(de));
+
+  // Increment root link count for the new subdirectory.
+  rinode(rootino, &din);
+  din.nlink = xshort(xshort(din.nlink) + 1);
+  winode(rootino, &din);
   for (i = 2; i < argc; i++) {
-    // get rid of "user/"
+    // Choose the destination directory and filename.
     char *shortname;
-    if (strncmp(argv[i], "user/", 5) == 0)
-      shortname = argv[i] + 5;
-    else
-      shortname = argv[i];
+    uint dirino = rootino;
 
-    assert(index(shortname, '/') == 0);
+    if (strcmp(argv[i], "etc/passwd") == 0) {
+      dirino = etcino;
+      shortname = "passwd";
+    } else if (strncmp(argv[i], "user/", 5) == 0) {
+      shortname = argv[i] + 5;
+    } else {
+      shortname = argv[i];
+    }
 
     if ((fd = open(argv[i], 0)) < 0)
       die(argv[i]);
@@ -155,10 +180,18 @@ main(int argc, char *argv[])
 
     inum = ialloc(T_FILE);
 
+
+    // User programs must be executable.
+    if (strncmp(argv[i], "user/", 5) == 0) {
+      rinode(inum, &din);
+      din.mode = xint(0755);
+      winode(inum, &din);
+    }
+
     bzero(&de, sizeof(de));
     de.inum = xshort(inum);
     strncpy(de.name, shortname, DIRSIZ);
-    iappend(rootino, &de, sizeof(de));
+    iappend(dirino, &de, sizeof(de));
 
     while ((cc = read(fd, buf, sizeof(buf))) > 0)
       iappend(inum, buf, cc);
@@ -167,12 +200,17 @@ main(int argc, char *argv[])
   }
 
   // fix size of root inode dir
+  rinode(etcino, &din);
+  off = xint(din.size);
+  off = ((off / BSIZE) + 1) * BSIZE;
+  din.size = xint(off);
+  winode(etcino, &din);
+  // Fix size of root directory.
   rinode(rootino, &din);
   off = xint(din.size);
   off = ((off / BSIZE) + 1) * BSIZE;
   din.size = xint(off);
   winode(rootino, &din);
-
   balloc(freeblock);
 
   exit(0);
@@ -232,6 +270,15 @@ ialloc(ushort type)
   bzero(&din, sizeof(din));
   din.type = xshort(type);
   din.nlink = xshort(1);
+
+
+  if (type == T_DIR)
+    din.mode = xint(0755);
+  else if (type == T_FILE)
+    din.mode = xint(0644);
+
+  din.uid = xint(0);
+  din.gid = xint(0);
   din.size = xint(0);
   winode(inum, &din);
   return inum;
