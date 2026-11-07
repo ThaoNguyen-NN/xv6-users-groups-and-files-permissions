@@ -151,6 +151,10 @@ UPROGS=\
 	$U/_forphan\
 	$U/_dorphan\
 	$U/_sync\
+	$U/_whoami\
+	$U/_uidtest\
+	$U/_pwdtest\
+	$U/_metatest\
 
 fs.img: mkfs/mkfs README $(UPROGS)
 	mkfs/mkfs fs.img README $(UPROGS)

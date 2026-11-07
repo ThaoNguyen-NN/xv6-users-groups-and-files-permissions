@@ -110,3 +110,41 @@ sys_uptime(void)
   release(&tickslock);
   return xticks;
 }
+
+uint64
+sys_getuid(void)
+{
+  return myproc()->uid;
+}
+
+uint64
+sys_getgid(void)
+{
+  return myproc()->gid;
+}
+
+uint64
+sys_setuid(void)
+{
+  int uid;
+  struct proc *p = myproc();
+
+  argint(0, &uid);
+  if (uid < 0 || p->uid != 0) // chỉ root; argint trả void nên tự kiểm tra âm
+    return -1;
+  p->uid = uid;
+  return 0;
+}
+
+uint64
+sys_setgid(void)
+{
+  int gid;
+  struct proc *p = myproc();
+
+  argint(0, &gid);
+  if (gid < 0 || p->uid != 0)
+    return -1;
+  p->gid = gid;
+  return 0;
+}
