@@ -146,3 +146,39 @@ Kết quả ngày 07/11/2026:
 Ghi chú:
 Kiểm thử sử dụng dữ liệu fixture tạm.
 Kiểm thử tích hợp với /etc/passwd trong fs.img sẽ thực hiện sau khi hoàn thành UGP-19.
+
+## Permission Checking API (UGP-20)
+
+Người thực hiện: Trần Thị Thư
+Hàm check_permission() kiểm tra quyền truy cập
+theo mô hình DAC: Owner - Group - Others.
+
+### Khai báo
+
+int check_permission(uint mode,
+                     uint file_uid,
+                     uint file_gid,
+                     uint proc_uid,
+                     uint proc_gid,
+                     int requested);
+
+### Quy ước
+
+- PERM_READ = 4
+- PERM_WRITE = 2
+- PERM_EXEC = 1
+- ALLOW = 1
+- DENY = 0
+
+### Kiểm thử
+
+File: tests/permtest.c
+
+Kết quả ngày 08/11/2026:
+- 20 tests passed
+- 0 tests failed
+- permtest: ALL PASSED
+Ghi chú:
+Hàm được kiểm thử độc lập.
+Chưa tích hợp vào open, unlink, chdir hoặc exec.
+Việc tích hợp được thực hiện trong tuần 4.

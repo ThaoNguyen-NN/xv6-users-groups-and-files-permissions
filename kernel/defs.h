@@ -67,6 +67,14 @@ void            log_write(struct buf*);
 void            begin_op(void);
 void            end_op(void);
 
+// perm.c
+int check_permission(uint mode,
+                     uint file_uid,
+                     uint file_gid,
+                     uint proc_uid,
+                     uint proc_gid,
+                     int requested);
+
 // pipe.c
 int             pipealloc(struct file**, struct file**);
 void            pipeclose(struct pipe*, int);

@@ -1,0 +1,23 @@
+PASS: owner read
+PASS: owner write
+PASS: owner exec denied
+PASS: group read
+PASS: group write denied
+PASS: others read
+PASS: others write denied
+PASS: others exec
+PASS: owner cannot fallback to group
+PASS: group cannot fallback to others
+PASS: root read mode 0000
+PASS: root write mode 0000
+PASS: root exec denied 0644
+PASS: root exec allowed 0755
+PASS: root RWX requires exec bit
+PASS: owner read and write
+PASS: others read and write denied
+PASS: empty request denied
+PASS: unknown permission bit denied
+PASS: ignore higher mode bits
+
+permtest: 20 passed, 0 failed
+permtest: ALL PASSED
