@@ -29,10 +29,10 @@ name:password:uid:gid
 Đủ ba lớp cho test matrix (Owner = alice, Group = carol, Other = bob):
 
 ```
-root:root:0:0
-nguyen:nguyen1:1000:100
-thu:thu1:1001:100
-ducanh:ducanh1:1002:200
+root:root123:0:0
+alice:alice123:1000:100
+carol:carol123:1001:100
+bob:bob123:1002:200
 ```
 
 Mật khẩu chỉ dùng cho demo.
