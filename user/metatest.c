@@ -19,8 +19,7 @@ main(void)
   int fd, pid, status, ok;
   struct stat st;
 
-  check("starts with root credentials",
-        getuid() == 0 && getgid() == 0);
+  check("starts with root credentials", getuid() == 0 && getgid() == 0);
   ok = stat("/README", &st) == 0;
   check("stat /README", ok);
   if (ok) {
@@ -111,8 +110,7 @@ main(void)
   if (pid == 0) {
     check("setgid(100)", setgid(100) == 0);
     check("setuid(1000)", setuid(1000) == 0);
-    check("process uid/gid are 1000/100",
-          getuid() == 1000 && getgid() == 100);
+    check("process uid/gid are 1000/100", getuid() == 1000 && getgid() == 100);
 
     fd = open("metatest.tmp", O_CREATE | O_RDWR);
     check("create file as uid 1000 gid 100", fd >= 0);
