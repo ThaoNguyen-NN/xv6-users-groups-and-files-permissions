@@ -181,4 +181,47 @@ Kết quả ngày 08/11/2026:
 Ghi chú:
 Hàm được kiểm thử độc lập.
 Chưa tích hợp vào open, unlink, chdir hoặc exec.
-Việc tích hợp được thực hiện trong tuần 4.
+Việc tích hợp được thực hiện trong tuần 4 - đã thực hiện tại kexec() và namex()
+
+## Execute and Directory Search Permission API (UGP-24)
+
+### 1. Phạm vi
+
+Tích hợp `check_permission()` vào quá trình thực thi chương trình và phân giải đường dẫn, nhằm kiểm soát quyền thực thi file và quyền tìm kiếm trong thư mục.
+
+### 2. Kiểm tra quyền thực thi file
+
+Trong `kexec()` (`kernel/exec.c`):
+
+- Sau khi lấy inode và khóa inode bằng `ilock()`, hệ thống kiểm tra quyền `PERM_EXEC` của file.
+- Quyền được xác định dựa trên `mode`, `uid`, `gid` của inode và `uid`, `gid` của process hiện tại.
+- Nếu process không có quyền thực thi, quá trình `exec` bị từ chối và trả về lỗi.
+
+### 3. Kiểm tra quyền tìm kiếm thư mục
+
+Trong `namex()` (`kernel/fs.c`):
+
+- Trước khi tìm entry tiếp theo bằng `dirlookup()`, hệ thống kiểm tra quyền `PERM_EXEC` trên thư mục hiện tại.
+- Process phải có quyền thực thi trên thư mục để tiếp tục phân giải đường dẫn qua thư mục đó.
+- Nếu không có quyền, quá trình phân giải đường dẫn thất bại.
+
+### 4. Quy tắc đối với root
+
+- Process có UID 0 được bỏ qua kiểm tra quyền tìm kiếm thư mục.
+- Khi thực thi file, root vẫn phải thỏa mãn điều kiện file có ít nhất một bit execute (`0111`).
+
+### 5. Hành vi khi bị từ chối
+
+| Trường hợp | Kết quả |
+|---|---|
+| File không cấp quyền execute cho process | `exec` thất bại |
+| Thư mục không cấp quyền execute cho process | Phân giải đường dẫn thất bại |
+| Root truy cập thư mục không có quyền execute | Được phép tìm kiếm |
+| Root thực thi file không có bit execute | `exec` thất bại |
+
+### 6. Phạm vi tích hợp
+
+- `kernel/exec.c`: kiểm tra quyền thực thi file trong `kexec()`.
+- `kernel/fs.c`: kiểm tra quyền tìm kiếm thư mục trong `namex()`.
+- `kernel/perm.c`: sử dụng hàm `check_permission()` đã được triển khai trong UGP-20.
+
