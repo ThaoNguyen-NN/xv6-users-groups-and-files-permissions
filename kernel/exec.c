@@ -7,6 +7,9 @@
 #include "defs.h"
 #include "elf.h"
 #include "perm.h"
+#include "fs.h"
+#include "sleeplock.h"
+#include "file.h"
 
 static int loadseg(pde_t *, uint64, struct inode *, uint, uint);
 
