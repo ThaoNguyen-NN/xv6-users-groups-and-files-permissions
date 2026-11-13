@@ -120,7 +120,6 @@ main(int argc, char *argv[])
   rootino = ialloc(T_DIR);
   assert(rootino == ROOTINO);
 
-
   bzero(&de, sizeof(de));
   de.inum = xshort(rootino);
   strcpy(de.name, ".");
@@ -130,7 +129,7 @@ main(int argc, char *argv[])
   de.inum = xshort(rootino);
   strcpy(de.name, "..");
   iappend(rootino, &de, sizeof(de));
-etcino = ialloc(T_DIR);
+  etcino = ialloc(T_DIR);
   bzero(&de, sizeof(de));
   de.inum = xshort(etcino);
   strcpy(de.name, ".");
@@ -179,7 +178,6 @@ etcino = ialloc(T_DIR);
     assert(strlen(shortname) <= DIRSIZ);
 
     inum = ialloc(T_FILE);
-
 
     // User programs must be executable.
     if (strncmp(argv[i], "user/", 5) == 0) {
@@ -270,7 +268,6 @@ ialloc(ushort type)
   bzero(&din, sizeof(din));
   din.type = xshort(type);
   din.nlink = xshort(1);
-
 
   if (type == T_DIR)
     din.mode = xint(0755);

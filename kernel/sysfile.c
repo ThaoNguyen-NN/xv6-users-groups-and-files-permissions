@@ -296,7 +296,6 @@ create(char *path, short type, short major, short minor)
   ip->minor = minor;
   ip->nlink = 1;
 
-
   if (type == T_DIR)
     ip->mode = 0755;
   else if (type == T_DEVICE)

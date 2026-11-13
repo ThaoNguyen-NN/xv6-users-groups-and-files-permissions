@@ -8,7 +8,7 @@ struct stat {
   short type;  // Type of file
   short nlink; // Number of links to file
   uint64 size; // Size of file in bytes
-uint mode;
-uint uid;
-uint gid;
+  uint mode;
+  uint uid;
+  uint gid;
 };
