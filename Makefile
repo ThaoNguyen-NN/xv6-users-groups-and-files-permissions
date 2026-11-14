@@ -160,7 +160,7 @@ UPROGS=\
 	$U/_uidtest\
 	$U/_pwdtest\
 	$U/_metatest\
-
+        $U/_createtest
 fs.img: mkfs/mkfs README $(UPROGS) etc/passwd
 	mkfs/mkfs fs.img README $(UPROGS) etc/passwd
 

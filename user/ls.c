@@ -23,11 +23,28 @@ fmtname(char *path)
   buf[sizeof(buf) - 1] = '\0';
   return buf;
 }
+void
+format_mode(uint mode, char *buf)
+{
+  char perms[] = "rwxrwxrwx";
+  int i;
 
+  mode &= 0777;
+
+  for (i = 0; i < 9; i++) {
+    if (mode & (1 << (8 - i)))
+      buf[i] = perms[i];
+    else
+      buf[i] = '-';
+  }
+
+  buf[9] = '\0';
+}
 void
 ls(char *path)
 {
   char buf[512], *p;
+  char modebuf[10];
   int fd;
   struct dirent de;
   struct stat st;
@@ -46,7 +63,10 @@ ls(char *path)
   switch (st.type) {
   case T_DEVICE:
   case T_FILE:
-    printf("%s %d %d %d\n", fmtname(path), st.type, st.ino, (int)st.size);
+    format_mode(st.mode, modebuf);
+    printf("%s %s uid=%d gid=%d type=%d ino=%d size=%d\n",
+           fmtname(path), modebuf, st.uid, st.gid,
+           st.type, st.ino, (int)st.size);
     break;
 
   case T_DIR:
@@ -66,7 +86,10 @@ ls(char *path)
         printf("ls: cannot stat %s\n", buf);
         continue;
       }
-      printf("%s %d %d %d\n", fmtname(buf), st.type, st.ino, (int)st.size);
+      format_mode(st.mode, modebuf);
+      printf("%s %s uid=%d gid=%d type=%d ino=%d size=%d\n",
+             fmtname(buf), modebuf, st.uid, st.gid,
+             st.type, st.ino, (int)st.size);
     }
     break;
   }

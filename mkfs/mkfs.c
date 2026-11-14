@@ -1,3 +1,4 @@
+
 #include <stdio.h>
 #include <unistd.h>
 #include <stdlib.h>
@@ -73,7 +74,7 @@ int
 main(int argc, char *argv[])
 {
   int i, cc, fd;
-  uint rootino, etcino, inum, off;
+  uint rootino, etcino, binino, inum, off;
   struct dirent de;
   char buf[BSIZE];
   struct dinode din;
@@ -151,7 +152,33 @@ main(int argc, char *argv[])
   rinode(rootino, &din);
   din.nlink = xshort(xshort(din.nlink) + 1);
   winode(rootino, &din);
-  for (i = 2; i < argc; i++) {
+  // Create /bin directory.
+  binino = ialloc(T_DIR);
+
+  // Add "." entry to /bin.
+  bzero(&de, sizeof(de));
+  de.inum = xshort(binino);
+  strcpy(de.name, ".");
+  iappend(binino, &de, sizeof(de));
+
+  // Add ".." entry to /bin, pointing to root.
+  bzero(&de, sizeof(de));
+  de.inum = xshort(rootino);
+  strcpy(de.name, "..");
+  iappend(binino, &de, sizeof(de));
+
+  // Add "bin" entry to root directory.
+  bzero(&de, sizeof(de));
+  de.inum = xshort(binino);
+  strcpy(de.name, "bin");
+  iappend(rootino, &de, sizeof(de));
+
+  // Increment root link count.
+  rinode(rootino, &din);
+  din.nlink = xshort(xshort(din.nlink) + 1);
+  winode(rootino, &din);
+
+ for (i = 2; i < argc; i++) {
     // Choose the destination directory and filename.
     char *shortname;
     uint dirino = rootino;
@@ -160,6 +187,7 @@ main(int argc, char *argv[])
       dirino = etcino;
       shortname = "passwd";
     } else if (strncmp(argv[i], "user/", 5) == 0) {
+      dirino = binino;
       shortname = argv[i] + 5;
     } else {
       shortname = argv[i];
@@ -191,6 +219,28 @@ main(int argc, char *argv[])
     strncpy(de.name, shortname, DIRSIZ);
     iappend(dirino, &de, sizeof(de));
 
+    // Keep /echo as a compatibility hard link for xv6 tests.
+    if (strcmp(argv[i], "user/_echo") == 0) {
+      bzero(&de, sizeof(de));
+      de.inum = xshort(inum);
+      strcpy(de.name, "echo");
+      iappend(rootino, &de, sizeof(de));
+      // The inode now has two directory entries.
+      rinode(inum, &din);
+      din.nlink = xshort(xshort(din.nlink) + 1);
+      winode(inum, &din);
+    }
+    // Keep /init as a compatibility hard link for xv6 tests.
+    if (strcmp(argv[i], "user/_init") == 0) {
+      bzero(&de, sizeof(de));
+      de.inum = xshort(inum);
+      strcpy(de.name, "init");
+      iappend(rootino, &de, sizeof(de));
+      // The inode now has two directory entries.
+      rinode(inum, &din);
+      din.nlink = xshort(xshort(din.nlink) + 1);
+      winode(inum, &din);
+    }
     while ((cc = read(fd, buf, sizeof(buf))) > 0)
       iappend(inum, buf, cc);
 
@@ -203,6 +253,12 @@ main(int argc, char *argv[])
   off = ((off / BSIZE) + 1) * BSIZE;
   din.size = xint(off);
   winode(etcino, &din);
+
+  rinode(binino, &din);
+  off = xint(din.size);
+  off = ((off / BSIZE) + 1) * BSIZE;
+  din.size = xint(off);
+  winode(binino, &din);
   // Fix size of root directory.
   rinode(rootino, &din);
   off = xint(din.size);
@@ -342,7 +398,6 @@ iappend(uint inum, void *xp, int n)
   din.size = xint(off);
   winode(inum, &din);
 }
-
 void
 die(const char *s)
 {

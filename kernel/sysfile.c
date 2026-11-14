@@ -15,7 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
-
+#include "perm.h"
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
 static int
@@ -285,7 +285,13 @@ create(char *path, short type, short major, short minor)
     iunlockput(ip);
     return 0;
   }
-
+  // Check write and execute permissions on parent directory.
+  if (!check_permission(dp->mode, dp->uid, dp->gid,
+                        myproc()->uid, myproc()->gid,
+                        PERM_WRITE | PERM_EXEC)) {
+    iunlockput(dp);
+    return 0;
+  }
   if ((ip = ialloc(dp->dev, type)) == 0) {
     iunlockput(dp);
     return 0;
