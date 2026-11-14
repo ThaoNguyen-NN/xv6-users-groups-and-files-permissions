@@ -15,6 +15,7 @@
 #include "sleeplock.h"
 #include "file.h"
 #include "fcntl.h"
+#include "perm.h"
 
 // Fetch the nth word-sized system call argument as a file descriptor
 // and return both the descriptor and the corresponding struct file.
@@ -197,7 +198,21 @@ isdirempty(struct inode *dp)
   }
   return 1;
 }
+// The caller must lock ip before calling this function.
+static int
+has_permission(struct inode *ip, int requested)
+{
+  struct proc *p = myproc();
 
+  return check_permission(
+    ip->mode,
+    ip->uid,
+    ip->gid,
+    p->uid,
+    p->gid,
+    requested
+  );
+}
 uint64
 sys_unlink(void)
 {
@@ -216,6 +231,10 @@ sys_unlink(void)
   }
 
   ilock(dp);
+
+  // Check WRITE and SEARCH on parent directory.
+  if (!has_permission(dp, PERM_WRITE | PERM_EXEC))
+    goto bad;
 
   // Cannot unlink "." or "..".
   if (namecmp(name, ".") == 0 || namecmp(name, "..") == 0)
@@ -341,7 +360,7 @@ uint64
 sys_open(void)
 {
   char path[MAXPATH];
-  int fd, omode;
+  int fd, omode, requested;
   struct file *f;
   struct inode *ip;
   int n;
@@ -376,7 +395,32 @@ sys_open(void)
     end_op();
     return -1;
   }
+   // Determine the required access permissions.
+switch (omode & 3) {
+case O_RDONLY:
+  requested = PERM_READ;
+  break;
+case O_WRONLY:
+  requested = PERM_WRITE;
+  break;
+case O_RDWR:
+  requested = PERM_READ | PERM_WRITE;
+  break;
+default:
+  iunlockput(ip);
+  end_op();
+  return -1;
+}
 
+if (omode & O_TRUNC)
+  requested |= PERM_WRITE;
+
+// Deny access if the process lacks permission.
+if (!has_permission(ip, requested)) {
+  iunlockput(ip);
+  end_op();
+  return -1;
+}
   if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0) {
     if (f)
       fileclose(f);
@@ -455,11 +499,12 @@ sys_chdir(void)
     return -1;
   }
   ilock(ip);
-  if (ip->type != T_DIR) {
-    iunlockput(ip);
-    end_op();
-    return -1;
-  }
+if (ip->type != T_DIR ||
+    !has_permission(ip, PERM_EXEC)) {
+  iunlockput(ip);
+  end_op();
+  return -1;
+}
   iunlock(ip);
   iput(p->cwd);
   end_op();
