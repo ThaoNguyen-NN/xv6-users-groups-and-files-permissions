@@ -164,7 +164,6 @@ UPROGS=\
 
 fs.img: mkfs/mkfs README $(UPROGS) etc/passwd
 	mkfs/mkfs fs.img README $(UPROGS) etc/passwd
-Ss
 -include kernel/*.d user/*.d
 
 clean: 
