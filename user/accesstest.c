@@ -157,7 +157,7 @@ main(void)
   char first_bytes[3];
   struct stat st;
 
-  printf("=== UGP-26 ACCESS TEST ===\n");
+  printf("=== ACCESS TEST ===\n");
 
   if (getuid() != 0 || getgid() != 0) {
     printf("ERROR: run accesstest as Root\n");
@@ -204,13 +204,13 @@ main(void)
     }
   }
 
-  printf("\n=== UGP-26 SUMMARY ===\n");
+  printf("\n=== SUMMARY ===\n");
   printf("Total: %d\n", total);
   printf("Passed: %d\n", total - failures);
   printf("Failed: %d\n", failures);
 
   if (failures == 0) {
-    printf("UGP-26: ALL TESTS PASSED\n");
+    printf("ALL TESTS PASSED\n");
     exit(0);
   }
 
