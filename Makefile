@@ -29,7 +29,7 @@ OBJS = \
   $K/kernelvec.o \
   $K/plic.o \
   $K/virtio_disk.o \
-  $K/perm.o
+  $K/perm.o \
 
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -160,12 +160,14 @@ UPROGS=\
 	$U/_uidtest\
 	$U/_pwdtest\
 	$U/_metatest\
+	$U/_createtest\
 	$U/_ugp23test\
 	$U/_accesstest
 PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
 
 $(PERM_FIXTURES): $U/_echo
 	cp $< $@
+
 fs.img: mkfs/mkfs README $(UPROGS) etc/passwd $(PERM_FIXTURES)
 	mkfs/mkfs fs.img README $(UPROGS) etc/passwd $(PERM_FIXTURES)
 
@@ -177,7 +179,7 @@ clean:
 	$K/kernel fs.img \
 	mkfs/mkfs .gdbinit \
         $U/usys.S \
-	$(UPROGS)
+	$(UPROGS) $(PERM_FIXTURES)
 
 # try to generate a unique GDB port
 GDBPORT = $(shell expr `id -u` % 5000 + 25000)

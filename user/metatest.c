@@ -19,8 +19,7 @@ main(void)
   int fd, pid, status, ok;
   struct stat st;
 
-  check("starts with root credentials",
-        getuid() == 0 && getgid() == 0);
+  check("starts with root credentials", getuid() == 0 && getgid() == 0);
   ok = stat("/README", &st) == 0;
   check("stat /README", ok);
   if (ok) {
@@ -70,18 +69,23 @@ main(void)
   if (fd >= 0) {
     check("root writes file", write(fd, "x", 1) == 1);
     check("root closes file", close(fd) == 0);
+    // Reopen the file and read metadata through its file descriptor.
+    fd = open("metatest.root", O_RDONLY);
+    check("root reopens file", fd >= 0);
 
-    ok = stat("metatest.root", &st) == 0;
-    check("stat root-created file", ok);
+    if (fd >= 0) {
+      ok = fstat(fd, &st) == 0;
+      check("fstat after reopening file", ok);
 
-    if (ok) {
-      check("root-created file is regular file", st.type == T_FILE);
-      check("root-created file mode is 0644", st.mode == 0644);
-      check("root-created file uid is 0", st.uid == 0);
-      check("root-created file gid is 0", st.gid == 0);
+      if (ok) {
+        check("reopened file is regular file", st.type == T_FILE);
+        check("reopened file mode is 0644", st.mode == 0644);
+        check("reopened file uid is 0", st.uid == 0);
+        check("reopened file gid is 0", st.gid == 0);
+      }
+      check("root closes reopened file", close(fd) == 0);
     }
   }
-
   unlink("metatest.root");
 
   // Test directory creation by root.
@@ -111,25 +115,13 @@ main(void)
   if (pid == 0) {
     check("setgid(100)", setgid(100) == 0);
     check("setuid(1000)", setuid(1000) == 0);
-    check("process uid/gid are 1000/100",
-          getuid() == 1000 && getgid() == 100);
+    check("process uid/gid are 1000/100", getuid() == 1000 && getgid() == 100);
 
     fd = open("metatest.tmp", O_CREATE | O_RDWR);
-    check("create file as uid 1000 gid 100", fd >= 0);
+    check("non-root cannot create file in /", fd < 0);
 
-    if (fd >= 0) {
-      check("write test file", write(fd, "x", 1) == 1);
-      check("close test file", close(fd) == 0);
-
-      ok = stat("metatest.tmp", &st) == 0;
-      check("stat newly created file", ok);
-
-      if (ok) {
-        check("new file mode is 0644", st.mode == 0644);
-        check("new file uid is 1000", st.uid == 1000);
-        check("new file gid is 100", st.gid == 100);
-      }
-    }
+    if (fd >= 0)
+      close(fd);
 
     exit(failed);
   }
@@ -139,18 +131,10 @@ main(void)
     check("wait for child process", ok);
 
     if (ok)
-      check("child metadata tests passed", status == 0);
+      check("child permission test passed", status == 0);
 
-    ok = stat("metatest.tmp", &st) == 0;
-    check("parent can read child file metadata", ok);
-
-    if (ok) {
-      check("persisted file mode is 0644", st.mode == 0644);
-      check("persisted file uid is 1000", st.uid == 1000);
-      check("persisted file gid is 100", st.gid == 100);
-    }
+    check("denied file does not exist", stat("metatest.tmp", &st) < 0);
   }
-
   unlink("metatest.tmp");
 
   printf("metatest: %s\n", failed ? "FAILED" : "ALL PASSED");

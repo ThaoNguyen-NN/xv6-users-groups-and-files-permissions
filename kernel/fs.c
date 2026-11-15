@@ -20,6 +20,7 @@
 #include "fs.h"
 #include "buf.h"
 #include "file.h"
+#include "perm.h"
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
@@ -210,9 +211,9 @@ ialloc(uint dev, short type)
     if (dip->type == 0) { // a free inode
       memset(dip, 0, sizeof(*dip));
       dip->type = type;
-dip->mode = 0;
-dip->uid = 0;
-dip->gid = 0;
+      dip->mode = 0;
+      dip->uid = 0;
+      dip->gid = 0;
       log_write(bp); // mark it allocated on the disk
       brelse(bp);
       return iget(dev, inum);
@@ -240,9 +241,9 @@ iupdate(struct inode *ip)
   dip->minor = ip->minor;
   dip->nlink = ip->nlink;
   dip->size = ip->size;
-dip->mode = ip->mode;
-dip->uid = ip->uid;
-dip->gid = ip->gid;
+  dip->mode = ip->mode;
+  dip->uid = ip->uid;
+  dip->gid = ip->gid;
   memmove(dip->addrs, ip->addrs, sizeof(ip->addrs));
   log_write(bp);
   brelse(bp);
@@ -316,9 +317,9 @@ ilock(struct inode *ip)
     ip->minor = dip->minor;
     ip->nlink = dip->nlink;
     ip->size = dip->size;
-ip->mode = dip->mode;
-ip->uid = dip->uid;
-ip->gid = dip->gid;
+    ip->mode = dip->mode;
+    ip->uid = dip->uid;
+    ip->gid = dip->gid;
     memmove(ip->addrs, dip->addrs, sizeof(ip->addrs));
     brelse(bp);
     ip->valid = 1;
@@ -509,7 +510,6 @@ stati(struct inode *ip, struct stat *st)
   st->type = ip->type;
   st->nlink = ip->nlink;
   st->size = ip->size;
-
 
   st->mode = ip->mode;
   st->uid = ip->uid;
@@ -719,6 +719,14 @@ namex(char *path, int nameiparent, char *name)
       return 0;
     }
     if (ip->nlink == 0) {
+      iunlockput(ip);
+      return 0;
+    }
+    // Check directory execute permission (search permission).
+    // Root can traverse directories regardless of their mode.
+    if (myproc()->uid != 0 &&
+        !check_permission(ip->mode, ip->uid, ip->gid, myproc()->uid,
+                          myproc()->gid, PERM_EXEC)) {
       iunlockput(ip);
       return 0;
     }
