@@ -29,7 +29,7 @@ OBJS = \
   $K/kernelvec.o \
   $K/plic.o \
   $K/virtio_disk.o \
-  $K/perm.o
+  $K/perm.o \
 
 
 # riscv64-unknown-elf- or riscv64-linux-gnu-
@@ -160,10 +160,11 @@ UPROGS=\
 	$U/_uidtest\
 	$U/_pwdtest\
 	$U/_metatest\
+	$U/_createtest\
+	$U/_ugp23test\
 
 fs.img: mkfs/mkfs README $(UPROGS) etc/passwd
 	mkfs/mkfs fs.img README $(UPROGS) etc/passwd
-
 -include kernel/*.d user/*.d
 
 clean: 

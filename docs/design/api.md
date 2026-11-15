@@ -93,8 +93,6 @@ Kết quả kiểm thử đã xác nhận:
 
 ## User lookup API (UGP-18)
 
-Người thực hiện: Trần Thị Thư _ 20233664
-
 ### Dữ liệu /etc/passwd
 
 Định dạng mỗi dòng        name:password:uid:gid
@@ -181,4 +179,84 @@ Kết quả ngày 08/11/2026:
 Ghi chú:
 Hàm được kiểm thử độc lập.
 Chưa tích hợp vào open, unlink, chdir hoặc exec.
-Việc tích hợp được thực hiện trong tuần 4.
+
+Việc tích hợp được thực hiện trong tuần 4 - đã thực hiện tại kexec() và namex()
+
+## Execute and Directory Search Permission API (UGP-24)
+
+### 1. Phạm vi
+
+Tích hợp `check_permission()` vào quá trình thực thi chương trình và phân giải đường dẫn, nhằm kiểm soát quyền thực thi file và quyền tìm kiếm trong thư mục.
+
+### 2. Kiểm tra quyền thực thi file
+
+Trong `kexec()` (`kernel/exec.c`):
+
+- Sau khi lấy inode và khóa inode bằng `ilock()`, hệ thống kiểm tra quyền `PERM_EXEC` của file.
+- Quyền được xác định dựa trên `mode`, `uid`, `gid` của inode và `uid`, `gid` của process hiện tại.
+- Nếu process không có quyền thực thi, quá trình `exec` bị từ chối và trả về lỗi.
+
+### 3. Kiểm tra quyền tìm kiếm thư mục
+
+Trong `namex()` (`kernel/fs.c`):
+
+- Trước khi tìm entry tiếp theo bằng `dirlookup()`, hệ thống kiểm tra quyền `PERM_EXEC` trên thư mục hiện tại.
+- Process phải có quyền thực thi trên thư mục để tiếp tục phân giải đường dẫn qua thư mục đó.
+- Nếu không có quyền, quá trình phân giải đường dẫn thất bại.
+
+### 4. Quy tắc đối với root
+
+- Process có UID 0 được bỏ qua kiểm tra quyền tìm kiếm thư mục.
+- Khi thực thi file, root vẫn phải thỏa mãn điều kiện file có ít nhất một bit execute (`0111`).
+
+### 5. Hành vi khi bị từ chối
+
+| Trường hợp | Kết quả |
+|---|---|
+| File không cấp quyền execute cho process | `exec` thất bại |
+| Thư mục không cấp quyền execute cho process | Phân giải đường dẫn thất bại |
+| Root truy cập thư mục không có quyền execute | Được phép tìm kiếm |
+| Root thực thi file không có bit execute | `exec` thất bại |
+
+### 6. Phạm vi tích hợp
+
+- `kernel/exec.c`: kiểm tra quyền thực thi file trong `kexec()`.
+- `kernel/fs.c`: kiểm tra quyền tìm kiếm thư mục trong `namex()`.
+- `kernel/perm.c`: sử dụng hàm `check_permission()` đã được triển khai trong UGP-20.
+.
+### UGP-23 – File System Permission Enforcement
+
+#### 1. API kiểm tra quyền
+
+```c
+int check_permission(uint mode, uint file_uid, uint file_gid,
+                     uint proc_uid, uint proc_gid, int requested);
+```
+
+Hàm trả về `1` khi được phép truy cập và `0` khi bị từ chối. Các quyền được biểu diễn bằng `PERM_READ = 4`, `PERM_WRITE = 2`, `PERM_EXEC = 1`.
+
+Trong `kernel/sysfile.c`, hàm hỗ trợ `has_permission()` lấy metadata từ inode và tiến trình để gọi `check_permission()`. Inode phải được khóa trước khi sử dụng.
+
+#### 2. Quy tắc kiểm tra quyền
+
+| System call | Quyền yêu cầu | Đối tượng kiểm tra |
+|---|---|---|
+| `sys_open` – `O_RDONLY` | READ | File |
+| `sys_open` – `O_WRONLY` | WRITE | File |
+| `sys_open` – `O_RDWR` | READ + WRITE | File |
+| `sys_open` – `O_TRUNC` | Bổ sung WRITE | File |
+| `sys_unlink` | WRITE + EXEC/SEARCH | Thư mục cha |
+| `sys_chdir` | EXEC/SEARCH | Thư mục đích |
+
+Khi không đủ quyền, syscall trả về `-1` và thực hiện giải phóng tài nguyên theo luồng xử lý lỗi hiện có.
+
+Kiểm tra quyền tạo file mới trong `create()` thuộc UGP-25. Kiểm tra quyền thực thi chương trình và duyệt các thư mục trung gian thuộc UGP-24.
+
+#### 3. Kiểm thử
+
+- Biên dịch kernel bằng `make kernel/kernel`.
+- Khởi động xv6 trên QEMU, kiểm tra các thao tác tạo, đọc, ghi, chuyển thư mục và xóa file.
+- Chạy `usertests -q` để kiểm tra hồi quy.
+- Sử dụng `user/ugp23test.c` để kiểm thử thao tác được phép và bị từ chối với user thường.
+
+Kết quả kiểm thử thực tế được lưu trong `docs/weekly/W04/evidence/`. Các trường hợp chưa được kiểm thử không được tính là PASS.

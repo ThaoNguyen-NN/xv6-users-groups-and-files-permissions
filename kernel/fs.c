@@ -20,6 +20,7 @@
 #include "fs.h"
 #include "buf.h"
 #include "file.h"
+#include "perm.h"
 
 #define min(a, b) ((a) < (b) ? (a) : (b))
 // there should be one superblock per disk device, but we run with
@@ -718,6 +719,14 @@ namex(char *path, int nameiparent, char *name)
       return 0;
     }
     if (ip->nlink == 0) {
+      iunlockput(ip);
+      return 0;
+    }
+    // Check directory execute permission (search permission).
+    // Root can traverse directories regardless of their mode.
+    if (myproc()->uid != 0 &&
+        !check_permission(ip->mode, ip->uid, ip->gid, myproc()->uid,
+                          myproc()->gid, PERM_EXEC)) {
       iunlockput(ip);
       return 0;
     }
