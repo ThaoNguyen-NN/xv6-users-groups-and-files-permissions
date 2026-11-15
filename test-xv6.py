@@ -225,6 +225,12 @@ def test_metatest():
     q.monitor("^metatest: ALL PASSED", timeout=30)
     q.stop()
 
+def test_metatest():
+    q = QEMU(True)
+    q.cmd("metatest\n")
+    q.monitor("^metatest: ALL PASSED", timeout=30)
+    q.stop()
+
 def main():
     print(args)
     rex = r'%s' % args.testrex
