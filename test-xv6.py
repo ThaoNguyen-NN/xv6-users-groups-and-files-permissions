@@ -225,10 +225,10 @@ def test_metatest():
     q.monitor("^metatest: ALL PASSED", timeout=30)
     q.stop()
 
-def test_metatest():
+def test_accesstest():
     q = QEMU(True)
-    q.cmd("metatest\n")
-    q.monitor("^metatest: ALL PASSED", timeout=30)
+    q.cmd("accesstest\n")
+    q.monitor("^accesstest: ALL PASSED", timeout=30)
     q.stop()
 
 def main():
