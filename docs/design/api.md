@@ -93,8 +93,6 @@ Kết quả kiểm thử đã xác nhận:
 
 ## User lookup API (UGP-18)
 
-Người thực hiện: Trần Thị Thư _ 20233664
-
 ### Dữ liệu /etc/passwd
 
 Định dạng mỗi dòng        name:password:uid:gid
@@ -182,3 +180,39 @@ Ghi chú:
 Hàm được kiểm thử độc lập.
 Chưa tích hợp vào open, unlink, chdir hoặc exec.
 Việc tích hợp được thực hiện trong tuần 4.
+### UGP-23 – File System Permission Enforcement
+
+#### 1. API kiểm tra quyền
+
+```c
+int check_permission(uint mode, uint file_uid, uint file_gid,
+                     uint proc_uid, uint proc_gid, int requested);
+```
+
+Hàm trả về `1` khi được phép truy cập và `0` khi bị từ chối. Các quyền được biểu diễn bằng `PERM_READ = 4`, `PERM_WRITE = 2`, `PERM_EXEC = 1`.
+
+Trong `kernel/sysfile.c`, hàm hỗ trợ `has_permission()` lấy metadata từ inode và tiến trình để gọi `check_permission()`. Inode phải được khóa trước khi sử dụng.
+
+#### 2. Quy tắc kiểm tra quyền
+
+| System call | Quyền yêu cầu | Đối tượng kiểm tra |
+|---|---|---|
+| `sys_open` – `O_RDONLY` | READ | File |
+| `sys_open` – `O_WRONLY` | WRITE | File |
+| `sys_open` – `O_RDWR` | READ + WRITE | File |
+| `sys_open` – `O_TRUNC` | Bổ sung WRITE | File |
+| `sys_unlink` | WRITE + EXEC/SEARCH | Thư mục cha |
+| `sys_chdir` | EXEC/SEARCH | Thư mục đích |
+
+Khi không đủ quyền, syscall trả về `-1` và thực hiện giải phóng tài nguyên theo luồng xử lý lỗi hiện có.
+
+Kiểm tra quyền tạo file mới trong `create()` thuộc UGP-25. Kiểm tra quyền thực thi chương trình và duyệt các thư mục trung gian thuộc UGP-24.
+
+#### 3. Kiểm thử
+
+- Biên dịch kernel bằng `make kernel/kernel`.
+- Khởi động xv6 trên QEMU, kiểm tra các thao tác tạo, đọc, ghi, chuyển thư mục và xóa file.
+- Chạy `usertests -q` để kiểm tra hồi quy.
+- Sử dụng `user/ugp23test.c` để kiểm thử thao tác được phép và bị từ chối với user thường.
+
+Kết quả kiểm thử thực tế được lưu trong `docs/weekly/W04/evidence/`. Các trường hợp chưa được kiểm thử không được tính là PASS.
