@@ -161,9 +161,13 @@ UPROGS=\
 	$U/_pwdtest\
 	$U/_metatest\
 	$U/_ugp23test\
+	$U/_accesstest
+PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
 
-fs.img: mkfs/mkfs README $(UPROGS) etc/passwd
-	mkfs/mkfs fs.img README $(UPROGS) etc/passwd
+$(PERM_FIXTURES): $U/_echo
+	cp $< $@
+fs.img: mkfs/mkfs README $(UPROGS) etc/passwd $(PERM_FIXTURES)
+	mkfs/mkfs fs.img README $(UPROGS) etc/passwd $(PERM_FIXTURES)
 
 -include kernel/*.d user/*.d
 
