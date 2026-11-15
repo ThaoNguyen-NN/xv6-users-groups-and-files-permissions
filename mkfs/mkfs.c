@@ -187,8 +187,15 @@ main(int argc, char *argv[])
       dirino = etcino;
       shortname = "passwd";
     } else if (strncmp(argv[i], "user/", 5) == 0) {
-      dirino = binino;
       shortname = argv[i] + 5;
+
+      if (strcmp(shortname, "_perm600") == 0 ||
+          strcmp(shortname, "_perm644") == 0 ||
+          strcmp(shortname, "_perm755") == 0) {
+        dirino = rootino;
+      } else {
+        dirino = binino;
+      }
     } else {
       shortname = argv[i];
     }
@@ -213,7 +220,7 @@ main(int argc, char *argv[])
       din.mode = xint(0755);
       winode(inum, &din);
     }
-        // UGP-26: prepare permission test fixtures.
+    // UGP-26: prepare permission test fixtures.
     if (strcmp(shortname, "perm600") == 0 ||
         strcmp(shortname, "perm644") == 0 ||
         strcmp(shortname, "perm755") == 0) {
