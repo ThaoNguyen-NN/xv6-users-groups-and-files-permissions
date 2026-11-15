@@ -207,6 +207,24 @@ def test_usertests(test=""):
     q.monitor('^ALL TESTS PASSED', progress='test', timeout=timeout)
     q.stop()
 
+def test_pwdtest():
+    q = QEMU(True)
+    q.cmd("pwdtest\n")
+    q.monitor("^pwdtest: ALL PASSED", timeout=30)
+    q.stop()
+
+def test_uidtest():
+    q = QEMU(True)
+    q.cmd("uidtest\n")
+    q.monitor("^uidtest: ALL PASSED", timeout=30)
+    q.stop()
+
+def test_metatest():
+    q = QEMU(True)
+    q.cmd("metatest\n")
+    q.monitor("^metatest: ALL PASSED", timeout=30)
+    q.stop()
+
 def main():
     print(args)
     rex = r'%s' % args.testrex

@@ -50,8 +50,7 @@ kexec(char *path, char **argv)
   ilock(ip);
 
   // Check execute permission.
-  if (!check_permission(ip->mode, ip->uid, ip->gid,
-                        p->uid, p->gid, PERM_EXEC))
+  if (!check_permission(ip->mode, ip->uid, ip->gid, p->uid, p->gid, PERM_EXEC))
     goto bad;
 
   // Read the ELF header.

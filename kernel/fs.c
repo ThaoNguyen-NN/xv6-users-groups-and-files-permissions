@@ -725,8 +725,8 @@ namex(char *path, int nameiparent, char *name)
     // Check directory execute permission (search permission).
     // Root can traverse directories regardless of their mode.
     if (myproc()->uid != 0 &&
-        !check_permission(ip->mode, ip->uid, ip->gid,
-                          myproc()->uid, myproc()->gid, PERM_EXEC)) {
+        !check_permission(ip->mode, ip->uid, ip->gid, myproc()->uid,
+                          myproc()->gid, PERM_EXEC)) {
       iunlockput(ip);
       return 0;
     }
