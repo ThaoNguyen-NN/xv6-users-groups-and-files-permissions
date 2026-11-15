@@ -213,6 +213,25 @@ main(int argc, char *argv[])
       din.mode = xint(0755);
       winode(inum, &din);
     }
+        // UGP-26: prepare permission test fixtures.
+    if (strcmp(shortname, "perm600") == 0 ||
+        strcmp(shortname, "perm644") == 0 ||
+        strcmp(shortname, "perm755") == 0) {
+
+      rinode(inum, &din);
+
+      din.uid = xint(1000);
+      din.gid = xint(100);
+
+      if (strcmp(shortname, "perm600") == 0)
+        din.mode = xint(0600);
+      else if (strcmp(shortname, "perm644") == 0)
+        din.mode = xint(0644);
+      else
+        din.mode = xint(0755);
+
+      winode(inum, &din);
+    }
 
     bzero(&de, sizeof(de));
     de.inum = xshort(inum);
