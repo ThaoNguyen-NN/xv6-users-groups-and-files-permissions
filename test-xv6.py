@@ -1,3 +1,4 @@
+
 #!/usr/bin/env python3
 
 #
@@ -228,7 +229,7 @@ def test_metatest():
 def test_accesstest():
     q = QEMU(True)
     q.cmd("accesstest\n")
-    q.monitor("^accesstest: ALL PASSED", timeout=30)
+    q.monitor("^ALL TESTS PASSED", timeout=30)
     q.stop()
 
 def main():
