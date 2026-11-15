@@ -267,7 +267,7 @@ go(int which_child)
         }
         close(bb[1]);
         char *args[2] = {"cat", 0};
-        exec("/cat", args);
+        exec("/bin/cat", args);
         fprintf(2, "grind: cat: not found\n");
         exit(6);
       } else if (pid2 < 0) {
