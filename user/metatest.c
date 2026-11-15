@@ -74,18 +74,18 @@ main(void)
     check("root reopens file", fd >= 0);
 
     if (fd >= 0) {
-    ok = fstat(fd, &st) == 0;
-    check("fstat after reopening file", ok);
+      ok = fstat(fd, &st) == 0;
+      check("fstat after reopening file", ok);
 
-    if (ok) {
-      check("reopened file is regular file", st.type == T_FILE);
-      check("reopened file mode is 0644", st.mode == 0644);
-      check("reopened file uid is 0", st.uid == 0);
-      check("reopened file gid is 0", st.gid == 0);
-    }
+      if (ok) {
+        check("reopened file is regular file", st.type == T_FILE);
+        check("reopened file mode is 0644", st.mode == 0644);
+        check("reopened file uid is 0", st.uid == 0);
+        check("reopened file gid is 0", st.gid == 0);
+      }
       check("root closes reopened file", close(fd) == 0);
+    }
   }
-}
   unlink("metatest.root");
 
   // Test directory creation by root.
@@ -118,8 +118,7 @@ main(void)
     check("process uid/gid are 1000/100", getuid() == 1000 && getgid() == 100);
 
     fd = open("metatest.tmp", O_CREATE | O_RDWR);
-check("non-root cannot create file in /", fd < 0);
-
+    check("non-root cannot create file in /", fd < 0);
 
     if (fd >= 0)
       close(fd);
@@ -134,8 +133,7 @@ check("non-root cannot create file in /", fd < 0);
     if (ok)
       check("child permission test passed", status == 0);
 
-    check("denied file does not exist",
-          stat("metatest.tmp", &st) < 0);
+    check("denied file does not exist", stat("metatest.tmp", &st) < 0);
   }
   unlink("metatest.tmp");
 

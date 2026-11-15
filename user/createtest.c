@@ -54,8 +54,7 @@ main(void)
     check("wait for child", wait(&status) >= 0);
     check("child permission test passed", status == 0);
 
-    check("denied file does not exist",
-          stat("createtest.user", &st) < 0);
+    check("denied file does not exist", stat("createtest.user", &st) < 0);
   }
 
   // Clean up.

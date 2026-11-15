@@ -64,9 +64,8 @@ ls(char *path)
   case T_DEVICE:
   case T_FILE:
     format_mode(st.mode, modebuf);
-    printf("%s %s uid=%d gid=%d type=%d ino=%d size=%d\n",
-           fmtname(path), modebuf, st.uid, st.gid,
-           st.type, st.ino, (int)st.size);
+    printf("%s %s uid=%d gid=%d type=%d ino=%d size=%d\n", fmtname(path),
+           modebuf, st.uid, st.gid, st.type, st.ino, (int)st.size);
     break;
 
   case T_DIR:
@@ -87,9 +86,8 @@ ls(char *path)
         continue;
       }
       format_mode(st.mode, modebuf);
-      printf("%s %s uid=%d gid=%d type=%d ino=%d size=%d\n",
-             fmtname(buf), modebuf, st.uid, st.gid,
-             st.type, st.ino, (int)st.size);
+      printf("%s %s uid=%d gid=%d type=%d ino=%d size=%d\n", fmtname(buf),
+             modebuf, st.uid, st.gid, st.type, st.ino, (int)st.size);
     }
     break;
   }

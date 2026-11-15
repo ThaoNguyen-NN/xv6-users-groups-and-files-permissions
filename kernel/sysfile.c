@@ -204,14 +204,8 @@ has_permission(struct inode *ip, int requested)
 {
   struct proc *p = myproc();
 
-  return check_permission(
-    ip->mode,
-    ip->uid,
-    ip->gid,
-    p->uid,
-    p->gid,
-    requested
-  );
+  return check_permission(ip->mode, ip->uid, ip->gid, p->uid, p->gid,
+                          requested);
 }
 uint64
 sys_unlink(void)
@@ -305,9 +299,8 @@ create(char *path, short type, short major, short minor)
     return 0;
   }
   // Check write and execute permissions on parent directory.
-  if (!check_permission(dp->mode, dp->uid, dp->gid,
-                        myproc()->uid, myproc()->gid,
-                        PERM_WRITE | PERM_EXEC)) {
+  if (!check_permission(dp->mode, dp->uid, dp->gid, myproc()->uid,
+                        myproc()->gid, PERM_WRITE | PERM_EXEC)) {
     iunlockput(dp);
     return 0;
   }
@@ -400,32 +393,32 @@ sys_open(void)
     end_op();
     return -1;
   }
-   // Determine the required access permissions.
-switch (omode & 3) {
-case O_RDONLY:
-  requested = PERM_READ;
-  break;
-case O_WRONLY:
-  requested = PERM_WRITE;
-  break;
-case O_RDWR:
-  requested = PERM_READ | PERM_WRITE;
-  break;
-default:
-  iunlockput(ip);
-  end_op();
-  return -1;
-}
+  // Determine the required access permissions.
+  switch (omode & 3) {
+  case O_RDONLY:
+    requested = PERM_READ;
+    break;
+  case O_WRONLY:
+    requested = PERM_WRITE;
+    break;
+  case O_RDWR:
+    requested = PERM_READ | PERM_WRITE;
+    break;
+  default:
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
 
-if (omode & O_TRUNC)
-  requested |= PERM_WRITE;
+  if (omode & O_TRUNC)
+    requested |= PERM_WRITE;
 
-// Deny access if the process lacks permission.
-if (!has_permission(ip, requested)) {
-  iunlockput(ip);
-  end_op();
-  return -1;
-}
+  // Deny access if the process lacks permission.
+  if (!has_permission(ip, requested)) {
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
   if ((f = filealloc()) == 0 || (fd = fdalloc(f)) < 0) {
     if (f)
       fileclose(f);
@@ -504,12 +497,11 @@ sys_chdir(void)
     return -1;
   }
   ilock(ip);
-if (ip->type != T_DIR ||
-    !has_permission(ip, PERM_EXEC)) {
-  iunlockput(ip);
-  end_op();
-  return -1;
-}
+  if (ip->type != T_DIR || !has_permission(ip, PERM_EXEC)) {
+    iunlockput(ip);
+    end_op();
+    return -1;
+  }
   iunlock(ip);
   iput(p->cwd);
   end_op();

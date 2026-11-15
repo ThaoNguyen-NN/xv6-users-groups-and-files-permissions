@@ -178,7 +178,7 @@ main(int argc, char *argv[])
   din.nlink = xshort(xshort(din.nlink) + 1);
   winode(rootino, &din);
 
- for (i = 2; i < argc; i++) {
+  for (i = 2; i < argc; i++) {
     // Choose the destination directory and filename.
     char *shortname;
     uint dirino = rootino;

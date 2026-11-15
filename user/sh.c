@@ -77,7 +77,7 @@ runcmd(struct cmd *cmd)
     ecmd = (struct execcmd *)cmd;
     if (ecmd->argv[0] == 0)
       exit(1);
- if (strchr(ecmd->argv[0], '/') == 0) {
+    if (strchr(ecmd->argv[0], '/') == 0) {
       if (strlen(ecmd->argv[0]) + 6 > MAXPATH) {
         fprintf(2, "command path too long\n");
         exit(1);
@@ -87,8 +87,8 @@ runcmd(struct cmd *cmd)
       strcpy(path + 5, ecmd->argv[0]);
       exec(path, ecmd->argv);
     } else {
-    exec(ecmd->argv[0], ecmd->argv);
-}
+      exec(ecmd->argv[0], ecmd->argv);
+    }
     fprintf(2, "exec %s failed\n", ecmd->argv[0]);
     break;
 
