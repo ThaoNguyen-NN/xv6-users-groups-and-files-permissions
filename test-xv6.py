@@ -70,6 +70,21 @@ class QEMU(object):
         print("kill", kids[0])
         os.kill(kids[0], signal.SIGKILL)
 
+    def login(self):
+        self.monitor(r'login:', timeout=30)
+        self.cmd("root\n")
+
+        self.monitor(r'Password:', timeout=10)
+        self.cmd("root123\n")
+
+        self.monitor(r'\$ ', timeout=10)
+    
+    @classmethod
+    def start_shell(cls, reset=False):
+        q = cls(reset)
+        q.login()
+        return q
+
     def stop(self):
         self.proc.terminate()
 
@@ -202,31 +217,31 @@ def test_usertests(test=""):
         timeout = 300
     elif test != "":
         opt += " " + test
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("usertests" + opt + "\n")
     q.monitor('^ALL TESTS PASSED', progress='test', timeout=timeout)
     q.stop()
 
 def test_pwdtest():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("pwdtest\n")
     q.monitor("^pwdtest: ALL PASSED", timeout=30)
     q.stop()
 
 def test_uidtest():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("uidtest\n")
     q.monitor("^uidtest: ALL PASSED", timeout=30)
     q.stop()
 
 def test_metatest():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("metatest\n")
     q.monitor("^metatest: ALL PASSED", timeout=30)
     q.stop()
 
 def test_accesstest():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("accesstest\n")
     q.monitor("^ALL TESTS PASSED", timeout=30)
     q.stop()
