@@ -22,4 +22,9 @@ struct passwd *getpwuid(int uid);
 // Tim user dau tien co GID phu hop
 struct passwd *getpwgid(int gid);
 
+// Tra ve 0 neu mat khau dung, -1 neu sai
+int pwd_authenticate(const struct passwd *user, const char *password);
+
+// Doi GID truoc, sau do doi UID
+int pwd_set_identity(const struct passwd *user);
 #endif

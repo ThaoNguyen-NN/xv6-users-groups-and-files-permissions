@@ -205,3 +205,29 @@ getpwgid(int gid)
 
   return lookup(2, 0, gid);
 }
+int
+pwd_authenticate(const struct passwd *user, const char *password)
+{
+  if (user == 0 || password == 0)
+    return -1;
+
+  if (strcmp(user->pw_passwd, password) == 0)
+    return 0;
+
+  return -1;
+}
+
+int
+pwd_set_identity(const struct passwd *user)
+{
+  if (user == 0)
+    return -1;
+
+  if (setgid(user->pw_gid) < 0)
+    return -1;
+
+  if (setuid(user->pw_uid) < 0)
+    return -1;
+
+  return 0;
+}
