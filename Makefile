@@ -135,6 +135,10 @@ $U/_pwdtest: $U/pwdtest.o $U/pwd.o $(ULIB)
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
 	$(OBJDUMP) -S $@ > $U/pwdtest.asm
 	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/pwdtest.sym
+$U/_login: $U/login.o $U/pwd.o $(ULIB)
+	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
+	$(OBJDUMP) -S $@ > $U/login.asm
+	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/login.sym
 UPROGS=\
 	$U/_cat\
 	$U/_echo\
@@ -147,6 +151,7 @@ UPROGS=\
 	$U/_mkdir\
 	$U/_rm\
 	$U/_sh\
+        $U/_login\
 	$U/_stressfs\
 	$U/_usertests\
 	$U/_grind\
