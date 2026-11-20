@@ -170,12 +170,11 @@ main(void)
 
   // Read and run input commands.
   while (getcmd(buf, sizeof(buf)) >= 0) {
-    if(strcmp(buf, "exit\n") == 0 ||
-       strcmp(buf, "exit") == 0){
-       exit(0);
-  }
+    if (strcmp(buf, "exit\n") == 0 || strcmp(buf, "exit") == 0) {
+      exit(0);
+    }
 
-   char *cmd = buf;
+    char *cmd = buf;
     while (*cmd == ' ' || *cmd == '\t')
       cmd++;
     if (*cmd == '\n') // is a blank command

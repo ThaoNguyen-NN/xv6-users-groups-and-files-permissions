@@ -31,10 +31,10 @@ main(void)
       exit(1);
     }
     if (pid == 0) {
-       exec("/bin/login", argv);
-       printf("init: exec login failed\n");
-       exit(1);
- }
+      exec("/bin/login", argv);
+      printf("init: exec login failed\n");
+      exit(1);
+    }
 
     for (;;) {
       // this call to wait() returns if the shell exits,
