@@ -31,7 +31,6 @@ OBJS = \
   $K/virtio_disk.o \
   $K/perm.o \
 
-
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
 #TOOLPREFIX = 
@@ -104,7 +103,7 @@ $K/%.o: $K/%.S
 tags: $(OBJS)
 	etags kernel/*.S kernel/*.c
 
-ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o
+ULIB = $U/ulib.o $U/usys.o $U/printf.o $U/umalloc.o $U/pwd.o
 
 _%: %.o $(ULIB) $U/user.ld
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $< $(ULIB)
@@ -167,6 +166,8 @@ UPROGS=\
 	$U/_metatest\
 	$U/_createtest\
 	$U/_ugp23test\
+	$U/_chmod\
+	$U/_chown\
 	$U/_accesstest
 PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
 
