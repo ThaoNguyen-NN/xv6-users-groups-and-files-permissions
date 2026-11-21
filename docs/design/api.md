@@ -9,11 +9,12 @@ Mỗi process có `uid` và `gid` (`uint`). Process đầu tiên (`init`) là ro
 | `int getgid(void)` | 24 | gid của process | không |
 | `int setuid(int uid)` | 25 | 0 | không phải root (uid hiện tại khác 0); `uid < 0` |
 | `int setgid(int gid)` | 26 | 0 | không phải root (uid hiện tại khác 0); `gid < 0` |
-
+| `int chmod(const char *path, int mode)` | 27 | 0 | không tìm thấy path; không đủ quyền (không phải root hoặc chủ file) |
+| `int chown(const char *path, int uid, int gid)` | 28 | 0 | không tìm thấy path; không phải root |
+ 
 Quy tắc:
 - Chỉ root được gọi `setuid` và `setgid`. Việc đổi một chiều: sau khi hạ xuống user thường thì không đổi lại được.
 - Khi hạ quyền phải gọi `setgid` trước, `setuid` sau, vì sau `setuid` xuống user thường thì `setgid` bị từ chối.
-- Số 27 và 28 dành cho `chmod` và `chown`.
 
 Chương trình: `whoami` in `uid=<n> gid=<n>` (sẽ in tên user khi có `/etc/passwd`); `uidtest` kiểm tra các quy tắc trên.
 ## File metadata (UGP-12)

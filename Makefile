@@ -31,7 +31,6 @@ OBJS = \
   $K/virtio_disk.o \
   $K/perm.o \
 
-
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
 #TOOLPREFIX = 
@@ -131,14 +130,13 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 # details:
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
-$U/_pwdtest: $U/pwdtest.o $U/pwd.o $(ULIB)
+
+PWD_PROGS = $U/_login $U/_pwdtest $U/_chown $U/_whoami
+$(PWD_PROGS): $U/_%: $U/%.o $U/pwd.o $(ULIB)
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
-	$(OBJDUMP) -S $@ > $U/pwdtest.asm
-	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/pwdtest.sym
-$U/_login: $U/login.o $U/pwd.o $(ULIB)
-	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
-	$(OBJDUMP) -S $@ > $U/login.asm
-	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/login.sym
+	$(OBJDUMP) -S $@ > $U/$*.asm
+	$(OBJDUMP) -t $@ | sed '1,/SYMBOL TABLE/d; s/ .* / /; /^$$/d' > $U/$*.sym
+
 UPROGS=\
 	$U/_cat\
 	$U/_echo\
@@ -167,6 +165,8 @@ UPROGS=\
 	$U/_metatest\
 	$U/_createtest\
 	$U/_ugp23test\
+	$U/_chmod\
+	$U/_chown\
 	$U/_accesstest
 PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
 

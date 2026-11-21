@@ -69,8 +69,7 @@ main(void)
     account = getpwnam(username);
 
     // Tu choi user khong ton tai hoac sai mat khau
-    if (account == 0 ||
-        pwd_authenticate(account, password) < 0) {
+    if (account == 0 || pwd_authenticate(account, password) < 0) {
       printf("Login incorrect\n");
       continue;
     }
