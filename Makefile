@@ -30,7 +30,6 @@ OBJS = \
   $K/plic.o \
   $K/virtio_disk.o \
   $K/perm.o \
-
 # riscv64-unknown-elf- or riscv64-linux-gnu-
 # perhaps in /opt/riscv/bin
 #TOOLPREFIX = 
@@ -167,6 +166,7 @@ UPROGS=\
 	$U/_ugp23test\
 	$U/_chmod\
 	$U/_chown\
+        $U/_su\
 	$U/_accesstest
 PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
 
