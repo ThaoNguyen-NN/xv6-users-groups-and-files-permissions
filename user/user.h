@@ -26,6 +26,7 @@ int pause(int);
 int uptime(void);
 int sync(void);
 int getuid(void);
+int getruid(void);
 int getgid(void);
 int setuid(int);
 int setgid(int);

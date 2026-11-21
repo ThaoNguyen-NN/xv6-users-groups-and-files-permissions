@@ -130,7 +130,7 @@ mkfs/mkfs: mkfs/mkfs.c $K/fs.h $K/param.h
 # http://www.gnu.org/software/make/manual/html_node/Chained-Rules.html
 .PRECIOUS: %.o
 
-PWD_PROGS = $U/_login $U/_pwdtest $U/_chown $U/_whoami
+PWD_PROGS = $U/_login $U/_pwdtest $U/_chown $U/_whoami $U/_su
 $(PWD_PROGS): $U/_%: $U/%.o $U/pwd.o $(ULIB)
 	$(LD) $(LDFLAGS) -T $U/user.ld -o $@ $^
 	$(OBJDUMP) -S $@ > $U/$*.asm

@@ -104,6 +104,7 @@ extern uint64 sys_mkdir(void);
 extern uint64 sys_close(void);
 extern uint64 sys_sync(void);
 extern uint64 sys_getuid(void);
+extern uint64 sys_getruid(void);
 extern uint64 sys_getgid(void);
 extern uint64 sys_setuid(void);
 extern uint64 sys_setgid(void);
@@ -137,6 +138,7 @@ static uint64 (*syscalls[])(void) = {
   [SYS_close]   = sys_close,
   [SYS_sync]    = sys_sync,
   [SYS_getuid]  = sys_getuid,
+  [SYS_getruid] = sys_getruid,
   [SYS_getgid]  = sys_getgid,
   [SYS_setuid]  = sys_setuid,
   [SYS_setgid]  = sys_setgid,
