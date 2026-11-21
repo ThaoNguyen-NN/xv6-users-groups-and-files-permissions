@@ -126,7 +126,7 @@ found:
   p->state = USED;
   p->uid = 0;
   p->gid = 0;
-
+  p->ruid = 0;
   // Allocate a trapframe page.
   if ((p->trapframe = (struct trapframe *)kalloc()) == 0) {
     freeproc(p);
@@ -166,6 +166,7 @@ freeproc(struct proc *p)
   p->sz = 0;
   p->pid = 0;
   p->name[0] = 0;
+  p->ruid = 0;
   p->chan = 0;
   p->killed = 0;
   p->xstate = 0;
@@ -290,6 +291,7 @@ kfork(void)
   np->cwd = idup(p->cwd);
   np->uid = p->uid;
   np->gid = p->gid;
+  np->ruid = p->ruid;
 
   safestrcpy(np->name, p->name, sizeof(p->name));
 
