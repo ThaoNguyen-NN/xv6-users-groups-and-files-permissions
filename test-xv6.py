@@ -144,7 +144,7 @@ class QEMU(object):
                 return
 
 def crash_log():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("logstress f0 f1 f2 f3 f4 f5\n")
     time.sleep(2)
     q.crash()
@@ -156,20 +156,21 @@ def recover_log():
     q.read()
     ok = q.match('^recovering', exit=False)
     if ok:
+        q.login()
         q.cmd("ls\n")
         q.monitor('f5', timeout=30)
     q.stop()
     return ok
 
 def forphan():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("forphan\n")
     q.monitor('wait', timeout=30)
     q.crash()
     q.stop()
 
 def dorphan():
-    q = QEMU(True)
+    q = QEMU.start_shell(True)
     q.cmd("dorphan\n")
     q.monitor('wait', timeout=30)
     q.crash()
