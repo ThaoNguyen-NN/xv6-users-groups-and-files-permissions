@@ -116,7 +116,11 @@ sys_getuid(void)
 {
   return myproc()->uid;
 }
-
+uint64
+sys_getruid(void)
+{
+  return myproc()->ruid;
+}
 uint64
 sys_getgid(void)
 {
@@ -133,6 +137,7 @@ sys_setuid(void)
   if (uid < 0 || p->uid != 0) // chỉ root; argint trả void nên tự kiểm tra âm
     return -1;
   p->uid = uid;
+  p->ruid = uid;
   return 0;
 }
 

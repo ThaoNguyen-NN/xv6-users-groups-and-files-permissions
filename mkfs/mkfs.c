@@ -216,19 +216,19 @@ main(int argc, char *argv[])
 
     // User programs must be executable.
     if (strncmp(argv[i], "user/", 5) == 0) {
-        rinode(inum, &din);
+      rinode(inum, &din);
 
-    if (strcmp(shortname, "su") == 0) {
-    // Setuid program owned by root.
+      if (strcmp(shortname, "su") == 0) {
+        // Setuid program owned by root.
         din.mode = xint(04755);
         din.uid = xint(0);
         din.gid = xint(0);
-  } else {
+      } else {
         din.mode = xint(0755);
-  }
+      }
 
-        winode(inum, &din);
-  }
+      winode(inum, &din);
+    }
     // UGP-26: prepare permission test fixtures.
     if (strcmp(shortname, "perm600") == 0 ||
         strcmp(shortname, "perm644") == 0 ||
