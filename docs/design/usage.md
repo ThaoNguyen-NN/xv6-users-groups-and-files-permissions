@@ -1,3 +1,27 @@
+### Biên dịch và khởi động xv6
+
+- Mở Terminal tại thư mục gốc của dự án.
+- Chạy `make qemu` để biên dịch và khởi động xv6.
+- Khi hệ thống khởi động thành công, màn hình hiển thị `login:`.
+- Nhấn `Ctrl+A`, sau đó nhấn `X` để thoát QEMU.
+
+### Tài khoản mẫu trong `/etc/passwd`
+
+| Tài khoản | Mật khẩu | UID | GID |
+|---|---|---|---|
+| root | root123 | 0 | 0 |
+| alice | alice123 | 1000 | 100 |
+| carol | carol123 | 1001 | 100 |
+| bob | bob123 | 1002 | 200 |
+
+### Sử dụng lệnh `login`
+
+- Nhập tên tài khoản và mật khẩu tại màn hình `login:`.
+- Đăng nhập đúng sẽ chuyển vào shell của người dùng tương ứng.
+- Sai mật khẩu hoặc tài khoản không tồn tại sẽ hiển thị `Login incorrect` và yêu cầu nhập lại.
+- Sau khi đăng nhập, sử dụng `whoami` để xem tên người dùng hiện tại.
+- Sử dụng `id` để kiểm tra UID và GID của tiến trình.
+- Nhập `exit` để đăng xuất và quay lại màn hình `login:`.
 ### Sử dụng lệnh `su`
 
 - `su`: chuyển sang tài khoản root (mặc định).

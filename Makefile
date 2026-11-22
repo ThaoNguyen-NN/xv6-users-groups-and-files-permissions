@@ -159,6 +159,7 @@ UPROGS=\
 	$U/_dorphan\
 	$U/_sync\
 	$U/_whoami\
+        $U/_id\
 	$U/_uidtest\
 	$U/_pwdtest\
 	$U/_metatest\
