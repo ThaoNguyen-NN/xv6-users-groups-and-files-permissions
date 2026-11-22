@@ -44,6 +44,7 @@ entry("pause");
 entry("uptime");
 entry("sync");
 entry("getuid");
+entry("getruid");
 entry("getgid");
 entry("setuid");
 entry("setgid");

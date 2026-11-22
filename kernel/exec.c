@@ -39,7 +39,8 @@ kexec(char *path, char **argv)
   struct proghdr ph;
   pagetable_t pagetable = 0, oldpagetable;
   struct proc *p = myproc();
-
+  int setuid_exec = 0;
+  uint exec_uid = p->uid;
   begin_op();
 
   // Open the executable file.
@@ -52,7 +53,11 @@ kexec(char *path, char **argv)
   // Check execute permission.
   if (!check_permission(ip->mode, ip->uid, ip->gid, p->uid, p->gid, PERM_EXEC))
     goto bad;
-
+  // Remember setuid metadata before releasing the inode.
+  if (ip->mode & 04000) {
+    setuid_exec = 1;
+    exec_uid = ip->uid;
+  }
   // Read the ELF header.
   if (readi(ip, 0, (uint64)&elf, 0, sizeof(elf)) != sizeof(elf))
     goto bad;
@@ -144,7 +149,9 @@ kexec(char *path, char **argv)
   p->trapframe->epc = elf.entry; // initial program counter = ulib.c:start()
   p->trapframe->sp = sp;         // initial stack pointer
   proc_freepagetable(oldpagetable, oldsz);
-
+  // Apply setuid only after exec has successfully committed.
+  if (setuid_exec)
+    p->uid = exec_uid;
   return argc; // this ends up in a0, the first argument to main(argc, argv)
 
 bad:
