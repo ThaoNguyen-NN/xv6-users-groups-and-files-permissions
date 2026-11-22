@@ -32,3 +32,15 @@
 - Sau khi chuyển thành công, shell mới chạy với UID và GID của tài khoản đích.
 - Sử dụng `whoami` để kiểm tra UID và GID hiện tại.
 - Nhấn `Ctrl+D` để thoát shell hiện tại và quay lại shell trước đó.
+
+### chmod
+chmod <mode> <file>...
+Đổi quyền truy cập của file. <mode> là số bát phân (ví dụ 644, 755; tối đa 4777).
+Chỉ root hoặc chủ file mới được đổi; người khác nhận "chmod: cannot change <file>".
+Ví dụ: chmod 600 f1   rồi   ls f1   ->   rw------- uid=1000 gid=100
+
+### chown
+chown <user> <file>...      chown <uid:gid> <file>...
+Đổi chủ và nhóm của file. Dạng <user> lấy uid và gid chính từ /etc/passwd.
+Chỉ root được phép; user thường nhận "chown: cannot change <file>".
+Ví dụ: chown bob f1   rồi   ls f1   ->   uid=1002 gid=200
