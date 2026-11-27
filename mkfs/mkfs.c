@@ -189,9 +189,12 @@ main(int argc, char *argv[])
     } else if (strncmp(argv[i], "user/", 5) == 0) {
       shortname = argv[i] + 5;
 
-      if (strcmp(shortname, "_perm600") == 0 ||
+      if (strcmp(shortname, "_perm000") == 0 ||
+          strcmp(shortname, "_perm600") == 0 ||
+          strcmp(shortname, "_perm640") == 0 ||
           strcmp(shortname, "_perm644") == 0 ||
-          strcmp(shortname, "_perm755") == 0) {
+          strcmp(shortname, "_perm755") == 0 ||
+          strcmp(shortname, "_perm4755") == 0) {
         dirino = rootino;
       } else {
         dirino = binino;
@@ -229,26 +232,34 @@ main(int argc, char *argv[])
 
       winode(inum, &din);
     }
-    // UGP-26: prepare permission test fixtures.
-    if (strcmp(shortname, "perm600") == 0 ||
+    // UGP-38: prepare permission matrix fixtures.
+    if (strcmp(shortname, "perm000") == 0 ||
+        strcmp(shortname, "perm600") == 0 ||
+        strcmp(shortname, "perm640") == 0 ||
         strcmp(shortname, "perm644") == 0 ||
-        strcmp(shortname, "perm755") == 0) {
+        strcmp(shortname, "perm755") == 0 ||
+        strcmp(shortname, "perm4755") == 0) {
 
       rinode(inum, &din);
 
       din.uid = xint(1000);
       din.gid = xint(100);
 
-      if (strcmp(shortname, "perm600") == 0)
+      if (strcmp(shortname, "perm000") == 0)
+        din.mode = xint(0000);
+      else if (strcmp(shortname, "perm600") == 0)
         din.mode = xint(0600);
+      else if (strcmp(shortname, "perm640") == 0)
+        din.mode = xint(0640);
       else if (strcmp(shortname, "perm644") == 0)
         din.mode = xint(0644);
-      else
+      else if (strcmp(shortname, "perm755") == 0)
         din.mode = xint(0755);
+      else
+        din.mode = xint(04755);
 
       winode(inum, &din);
     }
-
     bzero(&de, sizeof(de));
     de.inum = xshort(inum);
     strncpy(de.name, shortname, DIRSIZ);
