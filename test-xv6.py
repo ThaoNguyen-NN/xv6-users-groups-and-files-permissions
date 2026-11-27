@@ -244,7 +244,15 @@ def test_metatest():
 def test_accesstest():
     q = QEMU.start_shell(True)
     q.cmd("accesstest\n")
-    q.monitor("^ALL TESTS PASSED", timeout=30)
+
+    q.monitor(
+        "^ALL TESTS PASSED",
+        progress=r"^(FILE|DIR|===|Total:|Passed:|Failed:)",
+        timeout=30
+    )
+
+    # Save the complete QEMU output, including all matrix cases.
+    q.save_output()
     q.stop()
 
 def test_persistence():

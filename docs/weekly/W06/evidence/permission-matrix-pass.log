@@ -1,0 +1,176 @@
+qemu-system-riscv64 -machine virt -bios none -kernel kernel/kernel -m 128M -smp 3 -nographic -global virtio-mmio.force-legacy=false -drive file=fs.img,if=none,format=raw,id=x0 -device virtio-blk-device,drive=x0,bus=virtio-mmio-bus.0
+
+xv6 kernel is booting
+
+hart 1 starting
+hart 2 starting
+init: starting login
+login: root
+Password: root123
+$ accesstest
+=== UGP-38 PERMISSION MATRIX ===
+File fixtures verified: 000, 600, 640, 644, 755, 4755
+File owner: UID=1000 GID=100
+
+=== FILE PERMISSION TESTS ===
+FILE mode=000 role=Owner op=READ Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Owner op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Owner op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Group op=READ Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Group op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Group op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Other op=READ Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Other op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Other op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=000 role=Root op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=000 role=Root op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=000 role=Root op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Owner op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=600 role=Owner op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=600 role=Owner op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Group op=READ Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Group op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Group op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Other op=READ Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Other op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Other op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=600 role=Root op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=600 role=Root op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=600 role=Root op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Owner op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=640 role=Owner op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=640 role=Owner op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Group op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=640 role=Group op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Group op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Other op=READ Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Other op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Other op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=640 role=Root op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=640 role=Root op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=640 role=Root op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=644 role=Owner op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=644 role=Owner op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=644 role=Owner op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=644 role=Group op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=644 role=Group op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=644 role=Group op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=644 role=Other op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=644 role=Other op=WRITE Expected=DENY Actual=DENY PASS
+FILE mode=644 role=Other op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=644 role=Root op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=644 role=Root op=WRITE Expected=ALLOW Actual=ALLOW PASS
+FILE mode=644 role=Root op=EXEC Expected=DENY Actual=DENY PASS
+FILE mode=755 role=Owner op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Owner op=WRITE Expected=ALLOW Actual=ALLOW PASS
+EXEC_OK
+FILE mode=755 role=Owner op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Group op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Group op=WRITE Expected=DENY Actual=DENY PASS
+EXEC_OK
+FILE mode=755 role=Group op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Other op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Other op=WRITE Expected=DENY Actual=DENY PASS
+EXEC_OK
+FILE mode=755 role=Other op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Root op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=755 role=Root op=WRITE Expected=ALLOW Actual=ALLOW PASS
+EXEC_OK
+FILE mode=755 role=Root op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Owner op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Owner op=WRITE Expected=ALLOW Actual=ALLOW PASS
+EXEC_OK
+FILE mode=4755 role=Owner op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Group op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Group op=WRITE Expected=DENY Actual=DENY PASS
+EXEC_OK
+FILE mode=4755 role=Group op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Other op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Other op=WRITE Expected=DENY Actual=DENY PASS
+EXEC_OK
+FILE mode=4755 role=Other op=EXEC Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Root op=READ Expected=ALLOW Actual=ALLOW PASS
+FILE mode=4755 role=Root op=WRITE Expected=ALLOW Actual=ALLOW PASS
+EXEC_OK
+FILE mode=4755 role=Root op=EXEC Expected=ALLOW Actual=ALLOW PASS
+
+=== DIRECTORY PERMISSION TESTS ===
+DIR mode=000 role=Owner op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Owner op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Owner op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Group op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Group op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Group op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Other op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Other op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Other op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Root op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Root op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=000 role=Root op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Owner op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Owner op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Owner op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Group op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Group op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Group op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Other op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Other op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Other op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Root op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Root op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=600 role=Root op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Owner op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Owner op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Owner op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Group op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Group op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Group op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Other op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Other op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Other op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Root op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Root op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=640 role=Root op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Owner op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Owner op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Owner op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Group op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Group op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Group op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Other op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Other op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Other op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Root op=SEARCH Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Root op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=644 role=Root op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=755 role=Owner op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Owner op=CREATE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Owner op=DELETE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Group op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Group op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=755 role=Group op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=755 role=Other op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Other op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=755 role=Other op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=755 role=Root op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Root op=CREATE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=755 role=Root op=DELETE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Owner op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Owner op=CREATE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Owner op=DELETE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Group op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Group op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=4755 role=Group op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=4755 role=Other op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Other op=CREATE Expected=DENY Actual=DENY PASS
+DIR mode=4755 role=Other op=DELETE Expected=DENY Actual=DENY PASS
+DIR mode=4755 role=Root op=SEARCH Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Root op=CREATE Expected=ALLOW Actual=ALLOW PASS
+DIR mode=4755 role=Root op=DELETE Expected=ALLOW Actual=ALLOW PASS
+
+=== UGP-38 SUMMARY ===
+Total: 144
+Passed: 144
+Failed: 0
+ALL TESTS PASSED
+$

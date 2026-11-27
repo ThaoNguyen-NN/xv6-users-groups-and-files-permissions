@@ -170,7 +170,7 @@ UPROGS=\
         $U/_su\
 	$U/_persisttest\
 	$U/_accesstest
-PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
+PERM_FIXTURES = $U/_perm000 $U/_perm600 $U/_perm640 $U/_perm644 $U/_perm755 $U/_perm4755
 
 $(PERM_FIXTURES): $U/_echo
 	cp $< $@
