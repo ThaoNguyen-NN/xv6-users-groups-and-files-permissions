@@ -247,6 +247,35 @@ def test_accesstest():
     q.monitor("^ALL TESTS PASSED", timeout=30)
     q.stop()
 
+def test_persistence():
+    print("Test filesystem metadata persistence after reboot")
+
+    # First boot: reset filesystem and prepare test objects.
+    q = QEMU.start_shell(True)
+    q.cmd("persisttest prepare\n")
+    q.monitor(r"^persisttest: PREPARE (PASSED|FAILED)", timeout=30)
+
+    prepare_ok = "persisttest: PREPARE PASSED" in q.output
+    q.stop()
+
+    if not prepare_ok:
+        print("FAIL: persistence preparation")
+        sys.exit(1)
+
+    # Second boot: reuse the existing fs.img without resetting it.
+    q = QEMU.start_shell(False)
+    q.cmd("persisttest verify\n")
+    q.monitor(r"^persisttest: VERIFY (PASSED|FAILED)", timeout=30)
+
+    verify_ok = "persisttest: VERIFY PASSED" in q.output
+    q.stop()
+
+    if not verify_ok:
+        print("FAIL: metadata did not persist after reboot")
+        sys.exit(1)
+
+    print("PASS: metadata persisted after reboot")
+
 def main():
     print(args)
     rex = r'%s' % args.testrex

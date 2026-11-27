@@ -168,6 +168,7 @@ UPROGS=\
 	$U/_chmod\
 	$U/_chown\
         $U/_su\
+	$U/_persisttest\
 	$U/_accesstest
 PERM_FIXTURES = $U/_perm600 $U/_perm644 $U/_perm755
 

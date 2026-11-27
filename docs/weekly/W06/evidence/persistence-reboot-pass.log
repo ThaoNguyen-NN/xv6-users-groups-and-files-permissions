@@ -1,0 +1,16 @@
+Namespace(testrex='persistence', q=False)
+Test filesystem metadata persistence after reboot
+make: 'kernel/kernel' is up to date.
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_login user/_stressfs user/_usertests user/_grind user/_wc user/_zombie user/_logstress user/_forphan user/_dorphan user/_sync user/_whoami user/_id user/_uidtest user/_pwdtest user/_metatest user/_createtest user/_ugp23test user/_chmod user/_chown user/_su user/_persisttest user/_accesstest etc/passwd user/_perm600 user/_perm644 user/_perm755
+nmeta 60 (boot, super, log blocks 31, inode blocks 26, bitmap blocks 1) blocks 3940 total 4000
+balloc: first 1697 blocks have been allocated
+balloc: write bitmap block at sector 59
+login: 
+Password: 
+$ 
+persisttest: PREPARE PASSED
+login: 
+Password: 
+$ 
+persisttest: VERIFY PASSED
+PASS: metadata persisted after reboot

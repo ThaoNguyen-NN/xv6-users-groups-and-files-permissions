@@ -1,0 +1,76 @@
+Namespace(testrex='crash', q=False)
+Test recovery of log
+make: 'kernel/kernel' is up to date.
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_login user/_stressfs user/_usertests user/_grind user/_wc user/_zombie user/_logstress user/_forphan user/_dorphan user/_sync user/_whoami user/_id user/_uidtest user/_pwdtest user/_metatest user/_createtest user/_ugp23test user/_chmod user/_chown user/_su user/_persisttest user/_accesstest etc/passwd user/_perm600 user/_perm644 user/_perm755
+nmeta 60 (boot, super, log blocks 31, inode blocks 26, bitmap blocks 1) blocks 3940 total 4000
+balloc: first 1697 blocks have been allocated
+balloc: write bitmap block at sector 59
+login: 
+Password: 
+$ 
+kill 26481
+log attempt  1
+make: 'kernel/kernel' is up to date.
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_login user/_stressfs user/_usertests user/_grind user/_wc user/_zombie user/_logstress user/_forphan user/_dorphan user/_sync user/_whoami user/_id user/_uidtest user/_pwdtest user/_metatest user/_createtest user/_ugp23test user/_chmod user/_chown user/_su user/_persisttest user/_accesstest etc/passwd user/_perm600 user/_perm644 user/_perm755
+nmeta 60 (boot, super, log blocks 31, inode blocks 26, bitmap blocks 1) blocks 3940 total 4000
+balloc: first 1697 blocks have been allocated
+balloc: write bitmap block at sector 59
+login: 
+Password: 
+$ 
+kill 26569
+log attempt  2
+make: 'kernel/kernel' is up to date.
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_login user/_stressfs user/_usertests user/_grind user/_wc user/_zombie user/_logstress user/_forphan user/_dorphan user/_sync user/_whoami user/_id user/_uidtest user/_pwdtest user/_metatest user/_createtest user/_ugp23test user/_chmod user/_chown user/_su user/_persisttest user/_accesstest etc/passwd user/_perm600 user/_perm644 user/_perm755
+nmeta 60 (boot, super, log blocks 31, inode blocks 26, bitmap blocks 1) blocks 3940 total 4000
+balloc: first 1697 blocks have been allocated
+balloc: write bitmap block at sector 59
+login: 
+Password: 
+$ 
+kill 26656
+recovering tail 0 dst 2060
+recovering tail 1 dst 59
+recovering tail 2 dst 2058
+recovering tail 3 dst 2061
+recovering tail 4 dst 1767
+recovering tail 5 dst 2062
+recovering tail 6 dst 1743
+recovering tail 7 dst 2063
+recovering tail 8 dst 2064
+recovering tail 9 dst 38
+recovering tail 10 dst 2065
+recovering tail 11 dst 2066
+recovering tail 12 dst 2067
+recovering tail 13 dst 2068
+login: 
+Password: 
+$ 
+f5             rw-r--r-- uid=0 gid=0 type=2 ino=48 size=16000
+OK
+Test recovery of an orphaned file
+make: 'kernel/kernel' is up to date.
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_login user/_stressfs user/_usertests user/_grind user/_wc user/_zombie user/_logstress user/_forphan user/_dorphan user/_sync user/_whoami user/_id user/_uidtest user/_pwdtest user/_metatest user/_createtest user/_ugp23test user/_chmod user/_chown user/_su user/_persisttest user/_accesstest etc/passwd user/_perm600 user/_perm644 user/_perm755
+nmeta 60 (boot, super, log blocks 31, inode blocks 26, bitmap blocks 1) blocks 3940 total 4000
+balloc: first 1697 blocks have been allocated
+balloc: write bitmap block at sector 59
+login: 
+Password: 
+$ 
+wait for kill and reclaim 43
+kill 26743
+ireclaim: orphaned inode 43
+OK
+Test recovery of an orphaned file
+make: 'kernel/kernel' is up to date.
+mkfs/mkfs fs.img README user/_cat user/_echo user/_forktest user/_grep user/_init user/_kill user/_ln user/_ls user/_mkdir user/_rm user/_sh user/_login user/_stressfs user/_usertests user/_grind user/_wc user/_zombie user/_logstress user/_forphan user/_dorphan user/_sync user/_whoami user/_id user/_uidtest user/_pwdtest user/_metatest user/_createtest user/_ugp23test user/_chmod user/_chown user/_su user/_persisttest user/_accesstest etc/passwd user/_perm600 user/_perm644 user/_perm755
+nmeta 60 (boot, super, log blocks 31, inode blocks 26, bitmap blocks 1) blocks 3940 total 4000
+balloc: first 1697 blocks have been allocated
+balloc: write bitmap block at sector 59
+login: 
+Password: 
+$ 
+wait for kill and reclaim
+kill 26829
+ireclaim: orphaned inode 43
+OK
