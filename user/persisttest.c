@@ -33,12 +33,8 @@ check_file(char *path, uint size, int nlink, char *description)
   int ok = stat(path, &st) == 0;
 
   if (ok) {
-    ok = st.type == T_FILE &&
-         st.mode == FILE_MODE &&
-         st.uid == FILE_UID &&
-         st.gid == FILE_GID &&
-         st.size == size &&
-         st.nlink == nlink;
+    ok = st.type == T_FILE && st.mode == FILE_MODE && st.uid == FILE_UID &&
+         st.gid == FILE_GID && st.size == size && st.nlink == nlink;
   }
 
   check(description, ok);
@@ -51,9 +47,7 @@ check_directory(void)
   int ok = stat(DIR_PATH, &st) == 0;
 
   if (ok) {
-    ok = st.type == T_DIR &&
-         st.mode == DIR_MODE &&
-         st.uid == DIR_UID &&
+    ok = st.type == T_DIR && st.mode == DIR_MODE && st.uid == DIR_UID &&
          st.gid == DIR_GID;
   }
 
@@ -74,48 +68,36 @@ prepare(void)
   check("create persistence test file", fd >= 0);
 
   if (fd >= 0) {
-    check("write persistence test file",
-          write(fd, "UGP35", 5) == 5);
+    check("write persistence test file", write(fd, "UGP35", 5) == 5);
     check("close persistence test file", close(fd) == 0);
   }
 
   // Create a directory.
-  check("create persistence test directory",
-        mkdir(DIR_PATH) == 0);
+  check("create persistence test directory", mkdir(DIR_PATH) == 0);
 
   // Set file metadata.
-  check("chmod file to 0640",
-        chmod(FILE_PATH, FILE_MODE) == 0);
-  check("chown file to 1000:100",
-        chown(FILE_PATH, FILE_UID, FILE_GID) == 0);
+  check("chmod file to 0640", chmod(FILE_PATH, FILE_MODE) == 0);
+  check("chown file to 1000:100", chown(FILE_PATH, FILE_UID, FILE_GID) == 0);
 
   // Set directory metadata.
-  check("chmod directory to 0750",
-        chmod(DIR_PATH, DIR_MODE) == 0);
-  check("chown directory to 1002:200",
-        chown(DIR_PATH, DIR_UID, DIR_GID) == 0);
+  check("chmod directory to 0750", chmod(DIR_PATH, DIR_MODE) == 0);
+  check("chown directory to 1002:200", chown(DIR_PATH, DIR_UID, DIR_GID) == 0);
 
-  check_file(FILE_PATH, 5, 1,
-             "file metadata before hard link");
+  check_file(FILE_PATH, 5, 1, "file metadata before hard link");
 
   // Create a hard link.
-  check("create hard link",
-        link(FILE_PATH, LINK_PATH) == 0);
+  check("create hard link", link(FILE_PATH, LINK_PATH) == 0);
 
-  check_file(FILE_PATH, 5, 2,
-             "original file metadata after link");
-  check_file(LINK_PATH, 5, 2,
-             "hard link metadata");
+  check_file(FILE_PATH, 5, 2, "original file metadata after link");
+  check_file(LINK_PATH, 5, 2, "hard link metadata");
 
   // Remove the original name.
-  check("unlink original file",
-        unlink(FILE_PATH) == 0);
+  check("unlink original file", unlink(FILE_PATH) == 0);
 
   check("original pathname no longer exists",
         stat(FILE_PATH, &(struct stat){0}) < 0);
 
-  check_file(LINK_PATH, 5, 1,
-             "metadata preserved after unlink");
+  check_file(LINK_PATH, 5, 1, "metadata preserved after unlink");
 
   // Truncate through the remaining hard link.
   fd = open(LINK_PATH, O_WRONLY | O_TRUNC);
@@ -124,16 +106,14 @@ prepare(void)
   if (fd >= 0)
     check("close truncated file", close(fd) == 0);
 
-  check_file(LINK_PATH, 0, 1,
-             "metadata preserved after truncate");
+  check_file(LINK_PATH, 0, 1, "metadata preserved after truncate");
 
   check_directory();
 
   // Wait for outstanding filesystem transactions.
   check("sync completes", sync() == 0);
 
-  printf("persisttest: PREPARE %s\n",
-         failed ? "FAILED" : "PASSED");
+  printf("persisttest: PREPARE %s\n", failed ? "FAILED" : "PASSED");
 }
 
 static void
@@ -148,13 +128,11 @@ verify(void)
   check("original pathname remains absent",
         stat(FILE_PATH, &(struct stat){0}) < 0);
 
-  check_file(LINK_PATH, 0, 1,
-             "file metadata persisted after reboot");
+  check_file(LINK_PATH, 0, 1, "file metadata persisted after reboot");
 
   check_directory();
 
-  printf("persisttest: VERIFY %s\n",
-         failed ? "FAILED" : "PASSED");
+  printf("persisttest: VERIFY %s\n", failed ? "FAILED" : "PASSED");
 }
 
 int
