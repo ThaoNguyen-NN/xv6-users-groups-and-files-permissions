@@ -204,6 +204,12 @@ has_permission(struct inode *ip, int requested)
 {
   struct proc *p = myproc();
 
+  // Root can search directories regardless of execute bits.
+  // Regular files still require an execute bit for exec.
+  if (p->uid == 0 && ip->type == T_DIR && requested > 0 &&
+      (requested & ~7) == 0)
+    return 1;
+
   return check_permission(ip->mode, ip->uid, ip->gid, p->uid, p->gid,
                           requested);
 }
@@ -298,9 +304,8 @@ create(char *path, short type, short major, short minor)
     iunlockput(ip);
     return 0;
   }
-  // Check write and execute permissions on parent directory.
-  if (!check_permission(dp->mode, dp->uid, dp->gid, myproc()->uid,
-                        myproc()->gid, PERM_WRITE | PERM_EXEC)) {
+  // Check write and search permissions on parent directory.
+  if (!has_permission(dp, PERM_WRITE | PERM_EXEC)) {
     iunlockput(dp);
     return 0;
   }
